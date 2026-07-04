@@ -34,16 +34,15 @@ export function Layout({ children, currentPage, onNavigate }: LayoutProps) {
       {/* Mobile menu button */}
       <button
         onClick={() => setSidebarOpen(!sidebarOpen)}
-        className="lg:hidden fixed top-4 left-4 z-50 p-2 bg-slate-800 rounded-lg text-white hover:bg-slate-700 transition"
+        className="lg:hidden fixed top-6 left-4 z-50 p-2 bg-slate-800 rounded-lg text-white hover:bg-slate-700 transition"
       >
         {sidebarOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
       </button>
 
       {/* Sidebar */}
       <aside
-        className={`fixed inset-y-0 left-0 z-40 w-64 bg-slate-800 border-r border-slate-700 transform transition-transform duration-200 ease-in-out lg:translate-x-0 ${
-          sidebarOpen ? 'translate-x-0' : '-translate-x-full'
-        }`}
+        className={`fixed inset-y-0 left-0 z-40 w-64 bg-slate-800 border-r border-slate-700 transform transition-transform duration-200 ease-in-out lg:translate-x-0 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'
+          }`}
       >
         <div className="flex flex-col h-full">
           {/* Logo */}
@@ -68,11 +67,10 @@ export function Layout({ children, currentPage, onNavigate }: LayoutProps) {
                   onNavigate(item.id);
                   setSidebarOpen(false);
                 }}
-                className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition ${
-                  currentPage === item.id
-                    ? 'bg-blue-600/20 text-blue-400 border border-blue-500/30'
-                    : 'text-slate-400 hover:bg-slate-700/50 hover:text-white'
-                }`}
+                className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition ${currentPage === item.id
+                  ? 'bg-blue-600/20 text-blue-400 border border-blue-500/30'
+                  : 'text-slate-400 hover:bg-slate-700/50 hover:text-white'
+                  }`}
               >
                 <item.icon className="w-5 h-5" />
                 <span className="font-medium">{item.label}</span>
