@@ -21,6 +21,8 @@ export function EndpointsPage() {
   const [showForm, setShowForm] = useState(false);
   const [editingEndpoint, setEditingEndpoint] = useState<ApiEndpoint | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [isBulkDeleting, setIsBulkDeleting] = useState(false);
 
   useEffect(() => {
     fetchEndpoints();
@@ -49,6 +51,34 @@ export function EndpointsPage() {
       console.error('Failed to delete endpoint:', err);
     }
     setDeletingId(null);
+  };
+
+  const handleSelectAll = (checked: boolean) => {
+    if (checked) {
+      setSelectedIds(new Set(endpoints.map((e) => e.id)));
+    } else {
+      setSelectedIds(new Set());
+    }
+  };
+
+  const handleSelectOne = (id: string, checked: boolean) => {
+    const newSet = new Set(selectedIds);
+    if (checked) newSet.add(id);
+    else newSet.delete(id);
+    setSelectedIds(newSet);
+  };
+
+  const handleBulkDelete = async () => {
+    if (!confirm(`Are you sure you want to delete ${selectedIds.size} endpoints? All associated records will also be deleted.`)) return;
+    setIsBulkDeleting(true);
+    try {
+      await api.bulkDeleteEndpoints(Array.from(selectedIds));
+      setEndpoints(endpoints.filter(e => !selectedIds.has(e.id)));
+      setSelectedIds(new Set());
+    } catch (err) {
+      console.error('Bulk delete failed:', err);
+    }
+    setIsBulkDeleting(false);
   };
 
   const handleToggleActive = async (endpoint: ApiEndpoint) => {
@@ -118,17 +148,50 @@ export function EndpointsPage() {
           </button>
         </div>
       ) : (
-        <div className="grid gap-4">
-          {endpoints.map((endpoint) => (
-            <div
-              key={endpoint.id}
-              className={`bg-slate-800/50 border rounded-xl p-4 transition ${
-                endpoint.is_active
-                  ? 'border-slate-700 hover:border-slate-600'
-                  : 'border-slate-800 opacity-60'
-              }`}
-            >
-              <div className="flex items-start justify-between">
+        <>
+          <div className="flex items-center justify-between bg-slate-800/50 border border-slate-700 rounded-xl p-4 mb-4">
+            <label className="flex items-center gap-3 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={endpoints.length > 0 && selectedIds.size === endpoints.length}
+                onChange={(e) => handleSelectAll(e.target.checked)}
+                className="w-5 h-5 rounded border-slate-600 bg-slate-700 text-blue-500 focus:ring-blue-500"
+              />
+              <span className="text-slate-300 font-medium">Select All</span>
+            </label>
+            
+            {selectedIds.size > 0 && (
+              <div className="flex items-center gap-3">
+                <span className="text-sm text-slate-400">{selectedIds.size} selected</span>
+                <button
+                  onClick={handleBulkDelete}
+                  disabled={isBulkDeleting}
+                  className="flex items-center gap-2 px-3 py-1.5 bg-red-600/20 text-red-400 hover:bg-red-600/30 rounded-lg transition disabled:opacity-50"
+                >
+                  {isBulkDeleting ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
+                  Delete
+                </button>
+              </div>
+            )}
+          </div>
+          <div className="grid gap-4">
+            {endpoints.map((endpoint) => (
+              <div
+                key={endpoint.id}
+                className={`bg-slate-800/50 border rounded-xl p-4 transition flex gap-4 items-start ${
+                  endpoint.is_active
+                    ? 'border-slate-700 hover:border-slate-600'
+                    : 'border-slate-800 opacity-60'
+                }`}
+              >
+                <div className="pt-1">
+                  <input
+                    type="checkbox"
+                    checked={selectedIds.has(endpoint.id)}
+                    onChange={(e) => handleSelectOne(endpoint.id, e.target.checked)}
+                    className="w-5 h-5 rounded border-slate-600 bg-slate-700 text-blue-500 focus:ring-blue-500 cursor-pointer"
+                  />
+                </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-3 mb-2">
                     <div
@@ -154,6 +217,11 @@ export function EndpointsPage() {
                     >
                       {endpoint.is_active ? 'Active' : 'Inactive'}
                     </span>
+                    {endpoint.collection_name && (
+                      <span className="text-xs px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-400 border border-blue-500/30">
+                        {endpoint.collection_name}
+                      </span>
+                    )}
                   </div>
                   {endpoint.description && (
                     <p className="text-sm text-slate-400 mb-2">
@@ -235,9 +303,10 @@ export function EndpointsPage() {
                   </button>
                 </div>
               </div>
-            </div>
-          ))}
-        </div>
+              </div>
+            ))}
+          </div>
+        </>
       )}
 
       {showForm && (

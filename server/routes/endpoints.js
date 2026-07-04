@@ -27,6 +27,8 @@ router.post('/', async (req, res) => {
     const doc = {
       name: req.body.name,
       description: req.body.description || null,
+      collection_name: req.body.collection_name || null,
+      id_field: req.body.id_field || null,
       base_url: req.body.base_url,
       auth_type: req.body.auth_type || 'none',
       auth_config: req.body.auth_config || {},
@@ -56,6 +58,8 @@ router.put('/:id', async (req, res) => {
       $set: {
         name: req.body.name,
         description: req.body.description || null,
+        collection_name: req.body.collection_name || null,
+        id_field: req.body.id_field || null,
         base_url: req.body.base_url,
         auth_type: req.body.auth_type,
         auth_config: req.body.auth_config || {},
@@ -128,6 +132,20 @@ router.delete('/:id', async (req, res) => {
     await db.collection('data_records').deleteMany({ endpoint_id: _id });
     await db.collection('fetch_logs').deleteMany({ endpoint_id: _id });
     res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// POST /api/endpoints/bulk-delete — delete multiple endpoints + cascade records + logs
+router.post('/bulk-delete', async (req, res) => {
+  try {
+    const db = getDb();
+    const ids = req.body.ids.map(id => new ObjectId(id));
+    await db.collection(COL).deleteMany({ _id: { $in: ids } });
+    await db.collection('data_records').deleteMany({ endpoint_id: { $in: ids } });
+    await db.collection('fetch_logs').deleteMany({ endpoint_id: { $in: ids } });
+    res.json({ success: true, deletedCount: ids.length });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

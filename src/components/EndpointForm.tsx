@@ -10,7 +10,7 @@ interface EndpointFormProps {
 }
 
 const defaultFormData: EndpointFormData = {
-  name: '', description: '', base_url: '', auth_type: 'none', auth_config: {},
+  name: '', description: '', collection_name: '', id_field: '', base_url: '', auth_type: 'none', auth_config: {},
   field_mappings: [], response_path: '', pagination_type: 'none', pagination_config: {}, is_active: true,
 };
 
@@ -26,6 +26,8 @@ export function EndpointForm({ endpoint, onSave, onCancel }: EndpointFormProps) 
       setFormData({
         name: endpoint.name,
         description: endpoint.description || '',
+        collection_name: endpoint.collection_name || '',
+        id_field: endpoint.id_field || '',
         base_url: endpoint.base_url,
         auth_type: endpoint.auth_type,
         auth_config: (endpoint.auth_config as EndpointFormData['auth_config']) || {},
@@ -114,6 +116,17 @@ export function EndpointForm({ endpoint, onSave, onCancel }: EndpointFormProps) 
                 <input type="text" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} className={inputCls} placeholder="My API" required />
               </div>
               <div>
+                <label className="block text-sm font-medium text-slate-300 mb-2">Collection Name</label>
+                <input type="text" value={formData.collection_name} onChange={(e) => setFormData({ ...formData, collection_name: e.target.value })} className={inputCls} placeholder="e.g. Movies, Users" />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-2">Description</label>
+                <input type="text" value={formData.description} onChange={(e) => setFormData({ ...formData, description: e.target.value })} className={inputCls} placeholder="Optional description" />
+              </div>
+              <div>
                 <label className="block text-sm font-medium text-slate-300 mb-2">Status</label>
                 <label className="flex items-center gap-2 mt-3">
                   <input type="checkbox" checked={formData.is_active} onChange={(e) => setFormData({ ...formData, is_active: e.target.checked })} className="w-5 h-5 rounded border-slate-600 bg-slate-700 text-blue-500 focus:ring-blue-500" />
@@ -123,19 +136,21 @@ export function EndpointForm({ endpoint, onSave, onCancel }: EndpointFormProps) 
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-300 mb-2">Description</label>
-              <input type="text" value={formData.description} onChange={(e) => setFormData({ ...formData, description: e.target.value })} className={inputCls} placeholder="Optional description" />
-            </div>
-
-            <div>
               <label className="block text-sm font-medium text-slate-300 mb-2">Base URL *</label>
               <input type="url" value={formData.base_url} onChange={(e) => setFormData({ ...formData, base_url: e.target.value })} className={`${inputCls} font-mono text-sm`} placeholder="https://api.example.com/data" required />
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-slate-300 mb-2">Response Data Path (JSON path to array)</label>
-              <input type="text" value={formData.response_path} onChange={(e) => setFormData({ ...formData, response_path: e.target.value })} className={`${inputCls} font-mono text-sm`} placeholder="data.items or leave empty if root is array" />
-              <p className="text-xs text-slate-500 mt-1">E.g., "data.results" if response is {"{ data: { results: [...] } }"}</p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-2">Response Data Path (JSON path to array)</label>
+                <input type="text" value={formData.response_path} onChange={(e) => setFormData({ ...formData, response_path: e.target.value })} className={`${inputCls} font-mono text-sm`} placeholder="data.items or empty" />
+                <p className="text-xs text-slate-500 mt-1">E.g., "data.results"</p>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-2">Primary Key Field</label>
+                <input type="text" value={formData.id_field} onChange={(e) => setFormData({ ...formData, id_field: e.target.value })} className={`${inputCls} font-mono text-sm`} placeholder="e.g. id, uuid" />
+                <p className="text-xs text-slate-500 mt-1">Prevents duplicates. Leave empty to auto-detect "id" or "_id"</p>
+              </div>
             </div>
 
             {/* Authentication */}

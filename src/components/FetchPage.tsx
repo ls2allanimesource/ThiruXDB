@@ -11,6 +11,8 @@ export function FetchPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [fetchingIds, setFetchingIds] = useState<Set<string>>(new Set());
   const [fetchingAll, setFetchingAll] = useState(false);
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [fetchProgress, setFetchProgress] = useState<Record<string, { current: number, total: number }>>({});
 
   useEffect(() => { loadData(); }, []);
 
@@ -62,8 +64,18 @@ export function FetchPage() {
       recordsFetched = items.length;
       const mappings = endpoint.field_mappings as Array<{ sourceField: string; targetField: string; transform?: string }> | null;
 
-      for (const item of items) {
-        const externalId = item?.id?.toString() || item?._id?.toString() || null;
+      setFetchProgress(prev => ({ ...prev, [endpoint.id]: { current: 0, total: items.length } }));
+
+      for (let i = 0; i < items.length; i++) {
+        const item = items[i];
+        
+        let externalId = null;
+        if (endpoint.id_field) {
+          externalId = item?.[endpoint.id_field]?.toString() || null;
+        } else {
+          externalId = item?.id?.toString() || item?._id?.toString() || null;
+        }
+
         let mappedData: Record<string, unknown> = {};
         if (mappings && mappings.length > 0) {
           for (const mapping of mappings) {
@@ -80,6 +92,10 @@ export function FetchPage() {
         }
         const result = await api.upsertRecord({ endpoint_id: endpoint.id, external_id: externalId, raw_data: item, mapped_data: mappedData });
         if (result.action === 'updated') recordsUpdated++; else recordsCreated++;
+
+        if (i % 5 === 0 || i === items.length - 1) {
+          setFetchProgress(prev => ({ ...prev, [endpoint.id]: { current: i + 1, total: items.length } }));
+        }
       }
 
       await api.updateEndpointStatus(endpoint.id, { last_fetched_at: new Date().toISOString(), last_error: null });
@@ -94,9 +110,21 @@ export function FetchPage() {
     loadData();
   };
 
-  const fetchAllEndpoints = async () => {
+  const handleSelectAll = (checked: boolean) => {
+    if (checked) setSelectedIds(new Set(endpoints.map(e => e.id)));
+    else setSelectedIds(new Set());
+  };
+
+  const handleSelectOne = (id: string, checked: boolean) => {
+    const newSet = new Set(selectedIds);
+    if (checked) newSet.add(id); else newSet.delete(id);
+    setSelectedIds(newSet);
+  };
+
+  const fetchSelectedEndpoints = async () => {
     setFetchingAll(true);
-    for (const ep of endpoints) await fetchFromEndpoint(ep);
+    const selectedEndpoints = endpoints.filter(e => selectedIds.has(e.id));
+    for (const ep of selectedEndpoints) await fetchFromEndpoint(ep);
     setFetchingAll(false);
   };
 
@@ -109,9 +137,9 @@ export function FetchPage() {
           <h1 className="text-2xl font-bold text-white">Fetch Data</h1>
           <p className="text-slate-400 mt-1">Pull data from configured API endpoints</p>
         </div>
-        <button onClick={fetchAllEndpoints} disabled={fetchingAll || endpoints.length === 0} className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition shadow-lg shadow-green-500/20 disabled:opacity-50">
+        <button onClick={fetchSelectedEndpoints} disabled={fetchingAll || selectedIds.size === 0} className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition shadow-lg shadow-green-500/20 disabled:opacity-50">
           {fetchingAll ? <Loader2 className="w-5 h-5 animate-spin" /> : <RefreshCw className="w-5 h-5" />}
-          Fetch All ({endpoints.length})
+          Fetch Selected ({selectedIds.size})
         </button>
       </div>
 
@@ -121,13 +149,33 @@ export function FetchPage() {
           <h3 className="text-lg font-semibold text-white mb-2">No active endpoints</h3>
           <p className="text-slate-400">Configure and activate API endpoints first</p>
         </div>
-      ) : (
-        <div className="grid gap-4">
-          {endpoints.map((endpoint) => {
-            const isFetching = fetchingIds.has(endpoint.id);
-            return (
-              <div key={endpoint.id} className="bg-slate-800/50 border border-slate-700 rounded-xl p-4">
-                <div className="flex items-center justify-between">
+        <>
+          <div className="flex items-center justify-between bg-slate-800/50 border border-slate-700 rounded-xl p-4 mb-4">
+            <label className="flex items-center gap-3 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={endpoints.length > 0 && selectedIds.size === endpoints.length}
+                onChange={(e) => handleSelectAll(e.target.checked)}
+                className="w-5 h-5 rounded border-slate-600 bg-slate-700 text-blue-500 focus:ring-blue-500"
+              />
+              <span className="text-slate-300 font-medium">Select All</span>
+            </label>
+          </div>
+          <div className="grid gap-4">
+            {endpoints.map((endpoint) => {
+              const isFetching = fetchingIds.has(endpoint.id);
+              const progress = fetchProgress[endpoint.id];
+              return (
+                <div key={endpoint.id} className="bg-slate-800/50 border border-slate-700 rounded-xl p-4 flex gap-4 items-center">
+                  <div className="pt-1">
+                    <input
+                      type="checkbox"
+                      checked={selectedIds.has(endpoint.id)}
+                      onChange={(e) => handleSelectOne(endpoint.id, e.target.checked)}
+                      className="w-5 h-5 rounded border-slate-600 bg-slate-700 text-blue-500 focus:ring-blue-500 cursor-pointer"
+                    />
+                  </div>
+                  <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-4">
                     <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${endpoint.last_error ? 'bg-yellow-500/20' : endpoint.last_fetched_at ? 'bg-green-500/20' : 'bg-slate-700'}`}>
                       {endpoint.last_error ? <AlertCircle className="w-5 h-5 text-yellow-400" /> : endpoint.last_fetched_at ? <CheckCircle className="w-5 h-5 text-green-400" /> : <Database className="w-5 h-5 text-slate-500" />}
@@ -137,19 +185,29 @@ export function FetchPage() {
                       <p className="text-sm text-slate-500 font-mono truncate max-w-md">{endpoint.base_url}</p>
                     </div>
                   </div>
+                  
                   <div className="flex items-center gap-4">
-                    {endpoint.last_fetched_at && <span className="text-sm text-slate-500 flex items-center gap-1"><Clock className="w-4 h-4" />{new Date(endpoint.last_fetched_at).toLocaleString()}</span>}
+                    {isFetching && progress && (
+                      <div className="flex items-center gap-2 text-sm text-blue-400 font-medium">
+                        <span>{progress.current} / {progress.total}</span>
+                        <div className="w-24 h-1.5 bg-slate-700 rounded-full overflow-hidden">
+                          <div className="h-full bg-blue-500 transition-all duration-300" style={{ width: `${Math.min(100, (progress.current / (progress.total || 1)) * 100)}%` }} />
+                        </div>
+                      </div>
+                    )}
+                    {!isFetching && endpoint.last_fetched_at && <span className="text-sm text-slate-500 flex items-center gap-1"><Clock className="w-4 h-4" />{new Date(endpoint.last_fetched_at).toLocaleString()}</span>}
                     <button onClick={() => fetchFromEndpoint(endpoint)} disabled={isFetching} className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition disabled:opacity-50 shadow-lg shadow-blue-500/20">
                       {isFetching ? <Loader2 className="w-5 h-5 animate-spin" /> : <Play className="w-5 h-5" />}
                       Fetch
                     </button>
                   </div>
                 </div>
-                {endpoint.last_error && <div className="mt-3 flex items-center gap-2 text-sm text-red-400 bg-red-500/10 rounded-lg px-3 py-2"><AlertCircle className="w-4 h-4 shrink-0" /><span className="truncate">{endpoint.last_error}</span></div>}
+                {endpoint.last_error && <div className="mt-3 ml-12 flex items-center gap-2 text-sm text-red-400 bg-red-500/10 rounded-lg px-3 py-2"><AlertCircle className="w-4 h-4 shrink-0" /><span className="truncate">{endpoint.last_error}</span></div>}
               </div>
             );
           })}
         </div>
+        </>
       )}
 
       <div className="mt-8">

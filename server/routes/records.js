@@ -166,6 +166,18 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
+// POST /api/records/bulk-delete
+router.post('/bulk-delete', async (req, res) => {
+  try {
+    const db = getDb();
+    const ids = req.body.ids.map(id => new ObjectId(id));
+    await db.collection(COL).deleteMany({ _id: { $in: ids } });
+    res.json({ success: true, deletedCount: ids.length });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 function toClient(doc) {
   if (!doc) return null;
   const { _id, _search_text, endpoint_id, ...rest } = doc;

@@ -3,7 +3,7 @@ import { DataRecord, ApiEndpoint } from '../types/database';
 import { api } from '../lib/api';
 import {
   Search, Filter, RefreshCw, ChevronLeft, ChevronRight, Eye, Trash2,
-  Download, X, Database, FileJson, Table, Grid, Edit,
+  Download, X, Database, FileJson, Table, Grid, Edit, Copy
 } from 'lucide-react';
 
 const ITEMS_PER_PAGE_OPTIONS = [10, 25, 50, 100];
@@ -26,6 +26,8 @@ export function DataBrowserPage() {
   const [selectedRecord, setSelectedRecord] = useState<DataRecord | null>(null);
   const [viewMode, setViewMode] = useState<'table' | 'grid'>('table');
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [isBulkDeleting, setIsBulkDeleting] = useState(false);
 
   const totalPages = Math.ceil(totalCount / pageSize);
 
@@ -80,6 +82,31 @@ export function DataBrowserPage() {
     setDeletingId(null);
   };
 
+  const handleSelectAll = (checked: boolean) => {
+    if (checked) setSelectedIds(new Set(records.map(r => r.id)));
+    else setSelectedIds(new Set());
+  };
+
+  const handleSelectOne = (id: string, checked: boolean) => {
+    const newSet = new Set(selectedIds);
+    if (checked) newSet.add(id); else newSet.delete(id);
+    setSelectedIds(newSet);
+  };
+
+  const handleBulkDelete = async () => {
+    if (!confirm(`Are you sure you want to delete ${selectedIds.size} records?`)) return;
+    setIsBulkDeleting(true);
+    try {
+      await api.bulkDeleteRecords(Array.from(selectedIds));
+      setRecords(records.filter(r => !selectedIds.has(r.id)));
+      setTotalCount(prev => prev - selectedIds.size);
+      setSelectedIds(new Set());
+    } catch (err) {
+      console.error('Bulk delete failed:', err);
+    }
+    setIsBulkDeleting(false);
+  };
+
   const handleExport = (format: 'json' | 'csv') => {
     const dataToExport = records.map((r) => ({ id: r.id, external_id: r.external_id, raw_data: r.raw_data, mapped_data: r.mapped_data, fetched_at: r.fetched_at }));
     if (format === 'json') {
@@ -116,6 +143,20 @@ export function DataBrowserPage() {
     return Object.keys(sampleMapped).slice(0, 5);
   }, [records]);
 
+  const endpointsByCollection = useMemo(() => {
+    const grouped: Record<string, ApiEndpoint[]> = {};
+    const others: ApiEndpoint[] = [];
+    endpoints.forEach(ep => {
+      if (ep.collection_name) {
+        if (!grouped[ep.collection_name]) grouped[ep.collection_name] = [];
+        grouped[ep.collection_name].push(ep);
+      } else {
+        others.push(ep);
+      }
+    });
+    return { grouped, others };
+  }, [endpoints]);
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -150,7 +191,16 @@ export function DataBrowserPage() {
               <label className="block text-sm text-slate-400 mb-2">Source Endpoint</label>
               <select value={selectedEndpoint} onChange={(e) => { setSelectedEndpoint(e.target.value); setPage(1); }} className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
                 <option value="all">All Endpoints</option>
-                {endpoints.map((ep) => <option key={ep.id} value={ep.id}>{ep.name}</option>)}
+                {Object.entries(endpointsByCollection.grouped).map(([collection, eps]) => (
+                  <optgroup key={collection} label={`Collection: ${collection}`}>
+                    {eps.map(ep => <option key={ep.id} value={ep.id}>{ep.name}</option>)}
+                  </optgroup>
+                ))}
+                {endpointsByCollection.others.length > 0 && (
+                  <optgroup label={Object.keys(endpointsByCollection.grouped).length > 0 ? "Other Endpoints" : "Endpoints"}>
+                    {endpointsByCollection.others.map(ep => <option key={ep.id} value={ep.id}>{ep.name}</option>)}
+                  </optgroup>
+                )}
               </select>
             </div>
             <div>
@@ -169,6 +219,20 @@ export function DataBrowserPage() {
         )}
       </div>
 
+      {selectedIds.size > 0 && (
+        <div className="flex items-center gap-4 bg-blue-900/30 border border-blue-500/30 rounded-xl p-3">
+          <span className="text-sm text-blue-400 font-medium">{selectedIds.size} records selected</span>
+          <button
+            onClick={handleBulkDelete}
+            disabled={isBulkDeleting}
+            className="flex items-center gap-2 px-3 py-1.5 bg-red-600/20 text-red-400 hover:bg-red-600/30 rounded-lg transition text-sm disabled:opacity-50"
+          >
+            {isBulkDeleting ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
+            Delete Selected
+          </button>
+        </div>
+      )}
+
       {/* Data Grid/Table */}
       {isLoading ? (
         <div className="flex items-center justify-center h-64"><RefreshCw className="w-8 h-8 text-blue-500 animate-spin" /></div>
@@ -184,6 +248,14 @@ export function DataBrowserPage() {
             <table className="w-full">
               <thead className="bg-slate-700/50">
                 <tr>
+                  <th className="w-12 px-4 py-3 text-left">
+                    <input
+                      type="checkbox"
+                      checked={records.length > 0 && selectedIds.size === records.length}
+                      onChange={(e) => handleSelectAll(e.target.checked)}
+                      className="w-4 h-4 rounded border-slate-600 bg-slate-700 text-blue-500 focus:ring-blue-500 cursor-pointer"
+                    />
+                  </th>
                   <th className="text-left px-4 py-3 text-sm font-medium text-slate-400">Source</th>
                   <th className="text-left px-4 py-3 text-sm font-medium text-slate-400">External ID</th>
                   {getColumns.map((col) => <th key={col} className="text-left px-4 py-3 text-sm font-medium text-slate-400">{col}</th>)}
@@ -194,6 +266,14 @@ export function DataBrowserPage() {
               <tbody className="divide-y divide-slate-700">
                 {records.map((record) => (
                   <tr key={record.id} className="hover:bg-slate-700/30 cursor-pointer" onClick={() => setSelectedRecord(record)}>
+                    <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
+                      <input
+                        type="checkbox"
+                        checked={selectedIds.has(record.id)}
+                        onChange={(e) => handleSelectOne(record.id, e.target.checked)}
+                        className="w-4 h-4 rounded border-slate-600 bg-slate-700 text-blue-500 focus:ring-blue-500 cursor-pointer"
+                      />
+                    </td>
                     <td className="px-4 py-3 text-slate-300">{getEndpointName(record.endpoint_id)}</td>
                     <td className="px-4 py-3 font-mono text-sm text-white">{record.external_id || '-'}</td>
                     {getColumns.map((col) => { const mapped = record.mapped_data as Record<string, unknown>; return <td key={col} className="px-4 py-3 text-slate-300">{mapped?.[col] !== undefined ? String(mapped[col]).slice(0, 30) : '-'}</td>; })}
@@ -279,6 +359,20 @@ function RecordDetailModal({ record, endpointName, onClose, onDeleted }: { recor
     setIsDeleting(false);
   };
 
+  const handleCopyJSON = () => {
+    const data = view === 'mapped' ? record.mapped_data : record.raw_data;
+    navigator.clipboard.writeText(JSON.stringify(data, null, 2));
+    // Optional: add a small toast notification here if you have one
+  };
+
+  const handleDownloadJSON = () => {
+    const data = view === 'mapped' ? record.mapped_data : record.raw_data;
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a'); a.href = url; a.download = `record-${record.id}.json`; a.click();
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
       <div className="bg-slate-800 rounded-2xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-hidden border border-slate-700">
@@ -292,8 +386,18 @@ function RecordDetailModal({ record, endpointName, onClose, onDeleted }: { recor
 
         <div className="p-6 overflow-y-auto max-h-[calc(90vh-200px)]">
           <div className="flex gap-2 mb-4">
-            <button onClick={() => setView('mapped')} className={`px-4 py-2 rounded-lg text-sm font-medium transition ${view === 'mapped' ? 'bg-blue-600 text-white' : 'bg-slate-700 text-slate-400 hover:bg-slate-600'}`}>Mapped Data</button>
-            <button onClick={() => setView('raw')} className={`px-4 py-2 rounded-lg text-sm font-medium transition ${view === 'raw' ? 'bg-blue-600 text-white' : 'bg-slate-700 text-slate-400 hover:bg-slate-600'}`}>Raw JSON</button>
+            <div className="flex gap-2">
+              <button onClick={() => setView('mapped')} className={`px-4 py-2 rounded-lg text-sm font-medium transition ${view === 'mapped' ? 'bg-blue-600 text-white' : 'bg-slate-700 text-slate-400 hover:bg-slate-600'}`}>Mapped Data</button>
+              <button onClick={() => setView('raw')} className={`px-4 py-2 rounded-lg text-sm font-medium transition ${view === 'raw' ? 'bg-blue-600 text-white' : 'bg-slate-700 text-slate-400 hover:bg-slate-600'}`}>Raw JSON</button>
+            </div>
+            <div className="flex gap-2 ml-auto">
+              <button onClick={handleCopyJSON} className="flex items-center gap-2 px-3 py-2 bg-slate-700 text-slate-300 rounded-lg hover:bg-slate-600 transition text-sm">
+                <Copy className="w-4 h-4" /> Copy
+              </button>
+              <button onClick={handleDownloadJSON} className="flex items-center gap-2 px-3 py-2 bg-slate-700 text-slate-300 rounded-lg hover:bg-slate-600 transition text-sm">
+                <Download className="w-4 h-4" /> Download
+              </button>
+            </div>
           </div>
 
           {isEditing && view === 'mapped' ? (

@@ -55,6 +55,12 @@ export const api = {
   deleteEndpoint: (id: string): Promise<{ success: boolean }> =>
     request(`/endpoints/${id}`, { method: 'DELETE' }),
 
+  bulkDeleteEndpoints: (ids: string[]): Promise<{ success: boolean; deletedCount: number }> =>
+    request('/endpoints/bulk-delete', {
+      method: 'POST',
+      body: JSON.stringify({ ids }),
+    }),
+
   // Records
   getRecords: (params: {
     page?: number;
@@ -101,6 +107,12 @@ export const api = {
 
   deleteRecord: (id: string): Promise<{ success: boolean }> =>
     request(`/records/${id}`, { method: 'DELETE' }),
+
+  bulkDeleteRecords: (ids: string[]): Promise<{ success: boolean; deletedCount: number }> =>
+    request('/records/bulk-delete', {
+      method: 'POST',
+      body: JSON.stringify({ ids }),
+    }),
 
   // Logs
   getLogs: (params: {

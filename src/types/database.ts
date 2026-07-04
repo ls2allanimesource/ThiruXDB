@@ -10,6 +10,8 @@ export interface ApiEndpoint {
   id: string;
   name: string;
   description: string | null;
+  collection_name: string | null;
+  id_field: string | null;
   base_url: string;
   auth_type: 'none' | 'api_key' | 'bearer' | 'basic';
   auth_config: Json;
@@ -56,6 +58,8 @@ export interface FieldMapping {
 export interface EndpointFormData {
   name: string;
   description: string;
+  collection_name: string;
+  id_field: string;
   base_url: string;
   auth_type: 'none' | 'api_key' | 'bearer' | 'basic';
   auth_config: {
