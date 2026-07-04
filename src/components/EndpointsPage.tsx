@@ -303,7 +303,6 @@ export function EndpointsPage() {
                   </button>
                 </div>
               </div>
-              </div>
             ))}
           </div>
         </>

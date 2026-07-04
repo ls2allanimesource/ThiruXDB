@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { ApiEndpoint, FetchLog } from '../types/database';
 import { api } from '../lib/api';
 import {
@@ -13,6 +13,7 @@ export function FetchPage() {
   const [fetchingAll, setFetchingAll] = useState(false);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [fetchProgress, setFetchProgress] = useState<Record<string, { current: number, total: number }>>({});
+  const cancelTokens = useRef<Record<string, boolean>>({});
 
   useEffect(() => { loadData(); }, []);
 
@@ -33,6 +34,7 @@ export function FetchPage() {
 
   const fetchFromEndpoint = async (endpoint: ApiEndpoint) => {
     setFetchingIds((prev) => new Set(prev).add(endpoint.id));
+    cancelTokens.current[endpoint.id] = false;
     const startTime = Date.now();
     let status: 'success' | 'error' | 'partial' = 'success';
     let errorMessage: string | null = null;
@@ -67,6 +69,12 @@ export function FetchPage() {
       setFetchProgress(prev => ({ ...prev, [endpoint.id]: { current: 0, total: items.length } }));
 
       for (let i = 0; i < items.length; i++) {
+        if (cancelTokens.current[endpoint.id]) {
+          errorMessage = 'Cancelled by user';
+          status = 'partial';
+          break;
+        }
+        
         const item = items[i];
         
         let externalId = null;
@@ -107,7 +115,12 @@ export function FetchPage() {
 
     await api.createLog({ endpoint_id: endpoint.id, status, records_fetched: recordsFetched, records_created: recordsCreated, records_updated: recordsUpdated, error_message: errorMessage, duration_ms: Date.now() - startTime });
     setFetchingIds((prev) => { const n = new Set(prev); n.delete(endpoint.id); return n; });
+    delete cancelTokens.current[endpoint.id];
     loadData();
+  };
+
+  const handleCancelFetch = (id: string) => {
+    cancelTokens.current[id] = true;
   };
 
   const handleSelectAll = (checked: boolean) => {
@@ -149,6 +162,7 @@ export function FetchPage() {
           <h3 className="text-lg font-semibold text-white mb-2">No active endpoints</h3>
           <p className="text-slate-400">Configure and activate API endpoints first</p>
         </div>
+      ) : (
         <>
           <div className="flex items-center justify-between bg-slate-800/50 border border-slate-700 rounded-xl p-4 mb-4">
             <label className="flex items-center gap-3 cursor-pointer">
@@ -196,10 +210,17 @@ export function FetchPage() {
                       </div>
                     )}
                     {!isFetching && endpoint.last_fetched_at && <span className="text-sm text-slate-500 flex items-center gap-1"><Clock className="w-4 h-4" />{new Date(endpoint.last_fetched_at).toLocaleString()}</span>}
-                    <button onClick={() => fetchFromEndpoint(endpoint)} disabled={isFetching} className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition disabled:opacity-50 shadow-lg shadow-blue-500/20">
-                      {isFetching ? <Loader2 className="w-5 h-5 animate-spin" /> : <Play className="w-5 h-5" />}
-                      Fetch
-                    </button>
+                    {isFetching ? (
+                      <button onClick={() => handleCancelFetch(endpoint.id)} className="flex items-center gap-2 px-4 py-2 bg-red-600/20 text-red-400 hover:bg-red-600/30 rounded-lg transition shadow-lg shadow-red-500/20">
+                        <XCircle className="w-5 h-5" />
+                        Cancel
+                      </button>
+                    ) : (
+                      <button onClick={() => fetchFromEndpoint(endpoint)} className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition disabled:opacity-50 shadow-lg shadow-blue-500/20">
+                        <Play className="w-5 h-5" />
+                        Fetch
+                      </button>
+                    )}
                   </div>
                 </div>
                 {endpoint.last_error && <div className="mt-3 ml-12 flex items-center gap-2 text-sm text-red-400 bg-red-500/10 rounded-lg px-3 py-2"><AlertCircle className="w-4 h-4 shrink-0" /><span className="truncate">{endpoint.last_error}</span></div>}
