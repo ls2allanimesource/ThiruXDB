@@ -1,13 +1,13 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 
-interface AdminUser {
+interface SessionUser {
   username: string;
   loginTime: number;
 }
 
 interface AuthContextType {
   isAuthenticated: boolean;
-  user: AdminUser | null;
+  user: SessionUser | null;
   login: (username: string, password: string) => boolean;
   logout: () => void;
 }
@@ -15,21 +15,21 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | null>(null);
 
 const ADMIN_CREDENTIALS = {
-  username: process.env.ADMIN_USERNAME,
-  password: process.env.ADMIN_PASS,
+  username: import.meta.env.VITE_ADMIN_USERNAME,
+  password: import.meta.env.VITE_ADMIN_PASS,
 };
 
-const SESSION_KEY = 'api_dashboard_admin_session';
+const SESSION_KEY = 'thiruxdb_auth_session';
 const SESSION_DURATION = 24 * 60 * 60 * 1000; // 24 hours
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<AdminUser | null>(null);
+  const [user, setUser] = useState<SessionUser | null>(null);
 
   useEffect(() => {
     const stored = localStorage.getItem(SESSION_KEY);
     if (stored) {
       try {
-        const parsed: AdminUser = JSON.parse(stored);
+        const parsed: SessionUser = JSON.parse(stored);
         if (Date.now() - parsed.loginTime < SESSION_DURATION) {
           setUser(parsed);
         } else {
@@ -46,12 +46,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       username === ADMIN_CREDENTIALS.username &&
       password === ADMIN_CREDENTIALS.password
     ) {
-      const adminUser: AdminUser = {
+      const sessionUser: SessionUser = {
         username,
         loginTime: Date.now(),
       };
-      setUser(adminUser);
-      localStorage.setItem(SESSION_KEY, JSON.stringify(adminUser));
+      setUser(sessionUser);
+      localStorage.setItem(SESSION_KEY, JSON.stringify(sessionUser));
       return true;
     }
     return false;
