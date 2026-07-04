@@ -12,7 +12,14 @@ import {
   TrendingUp,
   AlertCircle,
   Loader2,
+  Server,
 } from 'lucide-react';
+
+interface SystemStatus {
+  mongoUri: string;
+  mongoStatus: string;
+  databaseName: string;
+}
 
 interface DashboardStats {
   totalEndpoints: number;
@@ -32,6 +39,7 @@ export function DashboardPage() {
     lastFetchTime: null,
     errors: 0,
   });
+  const [system, setSystem] = useState<SystemStatus | null>(null);
   const [endpoints, setEndpoints] = useState<ApiEndpoint[]>([]);
   const [recentRecords, setRecentRecords] = useState<DataRecord[]>([]);
   const [recentLogs, setRecentLogs] = useState<(FetchLog & { endpoint_name: string })[]>([]);
@@ -46,6 +54,7 @@ export function DashboardPage() {
     setIsLoading(true);
     try {
       const data = await api.getDashboard();
+      setSystem(data.system);
       setStats(data.stats);
       setEndpoints(data.endpoints);
       setRecentRecords(data.recentRecords);
@@ -80,6 +89,28 @@ export function DashboardPage() {
           <RefreshCw className="w-5 h-5" />
         </button>
       </div>
+
+      {/* System Status Banner */}
+      {system && (
+        <div className="bg-slate-800/50 border border-slate-700 rounded-xl p-4 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <div className={`p-2 rounded-lg ${system.mongoStatus === 'Connected' ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`}>
+              <Server className="w-6 h-6" />
+            </div>
+            <div>
+              <h2 className="text-white font-medium">Database Status</h2>
+              <div className="flex items-center gap-2 mt-1">
+                <span className={`w-2 h-2 rounded-full ${system.mongoStatus === 'Connected' ? 'bg-green-500' : 'bg-red-500'}`} />
+                <span className="text-sm text-slate-400">{system.mongoStatus} to <span className="font-mono text-slate-300">{system.databaseName}</span></span>
+              </div>
+            </div>
+          </div>
+          <div className="text-right hidden md:block">
+            <p className="text-xs text-slate-500 mb-1">Connection URI</p>
+            <p className="font-mono text-sm text-slate-300 bg-slate-900 px-3 py-1.5 rounded-lg border border-slate-700">{system.mongoUri}</p>
+          </div>
+        </div>
+      )}
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">

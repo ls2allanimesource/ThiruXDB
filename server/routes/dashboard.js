@@ -67,7 +67,15 @@ router.get('/', async (req, res) => {
       .filter((e) => e.last_fetched_at)
       .sort((a, b) => new Date(b.last_fetched_at) - new Date(a.last_fetched_at))[0]?.last_fetched_at || null;
 
+    const uri = process.env.MONGODB_URI || '';
+    const maskedUri = uri.replace(/\/\/[^:]+:[^@]+@/, '//***:***@');
+
     res.json({
+      system: {
+        mongoUri: maskedUri,
+        mongoStatus: db ? 'Connected' : 'Disconnected',
+        databaseName: process.env.MONGODB_DB || 'thiruXDB'
+      },
       stats: {
         totalEndpoints: endpoints.length,
         activeEndpoints: activeEndpoints.length,

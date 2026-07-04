@@ -126,6 +126,11 @@ export const api = {
 
   // Dashboard
   getDashboard: (): Promise<{
+    system: {
+      mongoUri: string;
+      mongoStatus: string;
+      databaseName: string;
+    };
     stats: {
       totalEndpoints: number;
       activeEndpoints: number;
