@@ -30,8 +30,21 @@ export function LogsPage() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <RefreshCw className="w-8 h-8 text-gray-900 dark:text-gray-100 animate-spin" />
+      <div className="space-y-6 animate-pulse">
+        <div>
+          <div className="h-8 w-48 bg-gray-200 dark:bg-gray-800 rounded mb-2"></div>
+          <div className="h-4 w-64 bg-gray-200 dark:bg-gray-800 rounded"></div>
+        </div>
+        <div className="bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+          <div className="h-12 bg-gray-100 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700"></div>
+          {[1,2,3,4,5,6].map(i => (
+            <div key={i} className="flex border-b border-gray-200 dark:border-gray-800 p-4 gap-4">
+              <div className="h-4 w-32 bg-gray-200 dark:bg-gray-700 rounded"></div>
+              <div className="h-4 w-16 bg-gray-200 dark:bg-gray-700 rounded"></div>
+              <div className="h-4 w-24 bg-gray-200 dark:bg-gray-700 rounded ml-auto"></div>
+            </div>
+          ))}
+        </div>
       </div>
     );
   }

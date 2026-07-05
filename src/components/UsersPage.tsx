@@ -16,7 +16,9 @@ import {
   X,
   Download,
   MapPin,
-  Search
+  Search,
+  Copy,
+  CheckCircle2
 } from 'lucide-react';
 
 export function UsersPage() {
@@ -43,6 +45,38 @@ export function UsersPage() {
     role: 'viewer',
     is_active: true
   });
+  const [isSaving, setIsSaving] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
+
+  // IP Lookup Modal State
+  const [ipModal, setIpModal] = useState<{ isOpen: boolean; ip: string; data: any; loading: boolean; error: string | null; copied: boolean }>({
+    isOpen: false,
+    ip: '',
+    data: null,
+    loading: false,
+    error: null,
+    copied: false
+  });
+
+  const handleIpLookup = async (ip: string) => {
+    setIpModal({ isOpen: true, ip, data: null, loading: true, error: null, copied: false });
+    try {
+      const res = await fetch(`http://ip-api.com/json/${ip}`);
+      if (!res.ok) throw new Error('Failed to fetch IP data');
+      const data = await res.json();
+      setIpModal(prev => ({ ...prev, data, loading: false }));
+    } catch (err: any) {
+      setIpModal(prev => ({ ...prev, error: err.message, loading: false }));
+    }
+  };
+
+  const copyIpData = () => {
+    if (ipModal.data) {
+      navigator.clipboard.writeText(JSON.stringify(ipModal.data, null, 2));
+      setIpModal(prev => ({ ...prev, copied: true }));
+      setTimeout(() => setIpModal(prev => ({ ...prev, copied: false })), 2000);
+    }
+  };
 
   useEffect(() => {
     if (activeTab === 'users') fetchUsers();
@@ -247,11 +281,11 @@ export function UsersPage() {
                       <td className="px-6 py-4 text-gray-700 dark:text-gray-300">{log.action}</td>
                       <td className="px-6 py-4 font-mono text-xs">
                         <div className="flex items-center gap-1 text-gray-700 dark:text-gray-300">
-                          <Globe className="w-3 h-3 text-gray-400 dark:text-gray-500" /> {log.ip_address}
-                          <a href={`https://ipinfo.io/${log.ip_address}`} target="_blank" rel="noopener noreferrer" className="ml-1 text-gray-400 hover:text-gray-900 dark:hover:text-white transition" title="Lookup IP">
-                            <Search className="w-3 h-3" />
-                          </a>
-                        </div>
+                        <Globe className="w-3 h-3 text-gray-400 dark:text-gray-500" /> {log.ip_address}
+                        <button onClick={() => handleIpLookup(log.ip_address)} className="ml-1 text-gray-400 hover:text-gray-900 dark:hover:text-white transition" title="Lookup IP">
+                          <Search className="w-3 h-3" />
+                        </button>
+                      </div>
                         {log.location_data && (
                           <div className="flex items-center gap-1 text-gray-500 dark:text-gray-400 mt-1">
                             <MapPin className="w-3 h-3" /> {log.location_data.city}, {log.location_data.country}
@@ -328,6 +362,51 @@ export function UsersPage() {
       {/* User Logs Modal */}
       {viewingLogsForUser && (
         <UserLogsModal user={viewingLogsForUser} onClose={() => setViewingLogsForUser(null)} />
+      )}
+
+      {/* IP Lookup Modal */}
+      {ipModal.isOpen && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl w-full max-w-md overflow-hidden shadow-2xl">
+            <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+                <Globe className="w-5 h-5 text-gray-400" /> IP Lookup: {ipModal.ip}
+              </h3>
+              <button onClick={() => setIpModal(prev => ({ ...prev, isOpen: false }))} className="text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:text-white transition"><X className="w-5 h-5" /></button>
+            </div>
+            <div className="p-6">
+              {ipModal.loading ? (
+                <div className="animate-pulse space-y-4">
+                  <div className="h-4 w-1/2 bg-gray-200 dark:bg-gray-700 rounded"></div>
+                  <div className="h-4 w-3/4 bg-gray-200 dark:bg-gray-700 rounded"></div>
+                  <div className="h-4 w-2/3 bg-gray-200 dark:bg-gray-700 rounded"></div>
+                  <div className="h-24 w-full bg-gray-100 dark:bg-gray-900 rounded"></div>
+                </div>
+              ) : ipModal.error ? (
+                <div className="text-red-500 text-sm">{ipModal.error}</div>
+              ) : ipModal.data ? (
+                <div className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4 text-sm">
+                    <div><span className="text-gray-500 block">Location</span><span className="text-gray-900 dark:text-white font-medium">{ipModal.data.city}, {ipModal.data.country}</span></div>
+                    <div><span className="text-gray-500 block">ISP</span><span className="text-gray-900 dark:text-white font-medium">{ipModal.data.isp}</span></div>
+                    <div><span className="text-gray-500 block">Organization</span><span className="text-gray-900 dark:text-white font-medium">{ipModal.data.org || '-'}</span></div>
+                    <div><span className="text-gray-500 block">Timezone</span><span className="text-gray-900 dark:text-white font-medium">{ipModal.data.timezone}</span></div>
+                  </div>
+                  <div className="relative mt-4">
+                    <div className="absolute top-2 right-2">
+                      <button onClick={copyIpData} className="p-1.5 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 rounded text-gray-700 dark:text-gray-300 transition" title="Copy JSON">
+                        {ipModal.copied ? <CheckCircle2 className="w-4 h-4 text-green-500" /> : <Copy className="w-4 h-4" />}
+                      </button>
+                    </div>
+                    <pre className="bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg p-4 text-xs font-mono text-gray-700 dark:text-gray-300 overflow-x-auto">
+                      {JSON.stringify(ipModal.data, null, 2)}
+                    </pre>
+                  </div>
+                </div>
+              ) : null}
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

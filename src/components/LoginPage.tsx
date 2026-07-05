@@ -25,12 +25,12 @@ export function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gray-50 dark:bg-zinc-950 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
-        <div className="bg-white/5 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/10 p-8">
+        <div className="bg-white dark:bg-zinc-900 rounded-2xl shadow-xl border border-gray-200 dark:border-zinc-800 p-8">
           <div className="flex flex-col items-center mb-8">
             <div className="w-16 h-16 bg-gray-900 dark:bg-white rounded-2xl flex items-center justify-center mb-4 shadow-sm shadow-gray-900/10 dark:shadow-white/10">
-              <Database className="w-8 h-8 text-gray-900 dark:text-white" />
+              <Database className="w-8 h-8 text-white dark:text-gray-900" />
             </div>
             <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Welcome To ThiruXDB</h1>
             <p className="text-gray-500 dark:text-gray-400 mt-1">Sign in to access the dashboard</p>
@@ -81,7 +81,7 @@ export function LoginPage() {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-gradient-to-r from-blue-600 to-cyan-500 text-gray-900 dark:text-white font-semibold py-3 rounded-lg hover:from-blue-700 hover:to-cyan-600 focus:outline-none focus:ring-2 focus:ring-gray-900 dark:focus:ring-gray-100 focus:ring-offset-2 focus:ring-offset-slate-900 transition disabled:opacity-50 disabled:cursor-not-allowed shadow-sm shadow-gray-900/10 dark:shadow-white/10"
+              className="w-full bg-gray-900 dark:bg-white text-white dark:text-gray-900 font-medium py-2.5 rounded-lg hover:bg-gray-800 dark:hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-900/20 dark:focus:ring-white/20 transition disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
             >
               {isLoading ? 'Signing in...' : 'Sign In'}
             </button>

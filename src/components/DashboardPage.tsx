@@ -69,8 +69,29 @@ export function DashboardPage() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <Loader2 className="w-8 h-8 text-gray-900 dark:text-gray-100 animate-spin" />
+      <div className="space-y-6 animate-pulse">
+        <div className="flex justify-between items-center mb-6">
+          <div>
+            <div className="h-8 w-48 bg-gray-200 dark:bg-gray-800 rounded mb-2"></div>
+            <div className="h-4 w-64 bg-gray-200 dark:bg-gray-800 rounded"></div>
+          </div>
+          <div className="h-10 w-32 bg-gray-200 dark:bg-gray-800 rounded"></div>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {[1,2,3,4].map(i => (
+            <div key={i} className="bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-xl p-6 h-32">
+              <div className="flex items-center gap-4 mb-4">
+                <div className="h-10 w-10 bg-gray-200 dark:bg-gray-700 rounded-lg"></div>
+                <div className="h-4 w-24 bg-gray-200 dark:bg-gray-700 rounded"></div>
+              </div>
+              <div className="h-8 w-16 bg-gray-200 dark:bg-gray-700 rounded"></div>
+            </div>
+          ))}
+        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+          <div className="bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-xl p-6 h-64"></div>
+          <div className="bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-xl p-6 h-64"></div>
+        </div>
       </div>
     );
   }

@@ -323,7 +323,7 @@ export function DataBrowserPage() {
               </thead>
               <tbody className="divide-y divide-gray-200 dark:divide-gray-800">
                 {records.map((record) => (
-                  <tr key={record.id} className={`hover:bg-gray-50 dark:hover:bg-gray-700/30 cursor-pointer transition ${isModified(record) ? 'bg-amber-50/50 dark:bg-amber-900/10' : ''}`} onClick={() => setSelectedRecord(record)}>
+                  <tr key={record.id} className={`hover:bg-gray-50 dark:hover:bg-gray-700/30 cursor-pointer transition ${isModified(record) ? 'bg-blue-50/50 dark:bg-blue-900/10' : ''}`} onClick={() => setSelectedRecord(record)}>
                     <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
                       <input
                         type="checkbox"
@@ -334,7 +334,7 @@ export function DataBrowserPage() {
                     </td>
                     <td className="px-4 py-3 text-gray-700 dark:text-gray-300">
                       <div className="flex items-center gap-2">
-                        {isModified(record) && <span className="w-1.5 h-1.5 rounded-full bg-amber-500" title="Modified since creation" />}
+                        {isModified(record) && <span className="w-1.5 h-1.5 rounded-full bg-blue-500" title="Modified since creation" />}
                         {getEndpointName(record.endpoint_id)}
                       </div>
                     </td>
@@ -370,7 +370,7 @@ export function DataBrowserPage() {
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {records.map((record) => (
-            <div key={record.id} onClick={() => setSelectedRecord(record)} className={`bg-white dark:bg-gray-800/50 border rounded-lg p-4 cursor-pointer transition relative ${isModified(record) ? 'border-amber-200 dark:border-amber-900/50 hover:border-amber-300 dark:hover:border-amber-700 shadow-[inset_4px_0_0_0_#f59e0b]' : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'}`}>
+            <div key={record.id} onClick={() => setSelectedRecord(record)} className={`bg-white dark:bg-gray-800/50 border rounded-lg p-4 cursor-pointer transition relative ${isModified(record) ? 'border-blue-200 dark:border-blue-900/50 hover:border-blue-300 dark:hover:border-blue-700 shadow-[inset_4px_0_0_0_#3b82f6]' : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'}`}>
               <div className="absolute top-4 right-4 z-10" onClick={(e) => e.stopPropagation()}>
                 <input
                   type="checkbox"
