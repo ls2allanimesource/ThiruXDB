@@ -87,7 +87,25 @@ export function FetchPage() {
         )}
       </div>
 
-      {endpoints.length === 0 ? (
+      {isLoading ? (
+            <div className="space-y-4">
+              {[1, 2, 3].map(i => (
+                <div key={i} className="bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-lg p-4 flex items-start gap-4 animate-pulse">
+                  <div className="w-5 h-5 rounded bg-gray-200 dark:bg-gray-700 shrink-0 mt-1"></div>
+                  <div className="flex-1 flex flex-col sm:flex-row gap-4 justify-between">
+                    <div className="flex items-center gap-4">
+                      <div className="w-10 h-10 rounded-lg bg-gray-200 dark:bg-gray-700 shrink-0"></div>
+                      <div className="space-y-2">
+                        <div className="h-5 bg-gray-200 dark:bg-gray-700 rounded w-32"></div>
+                        <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-48"></div>
+                      </div>
+                    </div>
+                    <div className="h-10 bg-gray-200 dark:bg-gray-700 rounded w-24"></div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : endpoints.length === 0 ? (
         <div className="bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-lg p-12 text-center">
           <div className="w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4"><Database className="w-8 h-8 text-gray-400 dark:text-gray-500" /></div>
           <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">No active endpoints</h3>

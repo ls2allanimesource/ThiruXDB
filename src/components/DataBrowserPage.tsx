@@ -278,7 +278,17 @@ export function DataBrowserPage() {
 
       {/* Data Grid/Table */}
       {isLoading ? (
-        <div className="flex items-center justify-center h-64"><RefreshCw className="w-8 h-8 text-gray-900 dark:text-gray-100 animate-spin" /></div>
+        <div className="bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden animate-pulse">
+          <div className="h-12 bg-gray-100 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700"></div>
+          {[1,2,3,4,5].map(i => (
+            <div key={i} className="flex border-b border-gray-200 dark:border-gray-800 p-4 gap-4">
+              <div className="h-4 w-4 bg-gray-200 dark:bg-gray-700 rounded"></div>
+              <div className="h-4 w-32 bg-gray-200 dark:bg-gray-700 rounded"></div>
+              <div className="h-4 w-48 bg-gray-200 dark:bg-gray-700 rounded"></div>
+              <div className="h-4 w-24 bg-gray-200 dark:bg-gray-700 rounded ml-auto"></div>
+            </div>
+          ))}
+        </div>
       ) : records.length === 0 ? (
         <div className="bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-lg p-12 text-center">
           <div className="w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4"><Database className="w-8 h-8 text-gray-400 dark:text-gray-500" /></div>

@@ -134,7 +134,24 @@ export function EndpointsPage() {
         )}
       </div>
 
-      {endpoints.length === 0 ? (
+      {isLoading ? (
+            <div className="space-y-4">
+              {[1, 2, 3].map(i => (
+                <div key={i} className="bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-lg p-4 flex items-start gap-4 animate-pulse">
+                  <div className="w-5 h-5 rounded bg-gray-200 dark:bg-gray-700 shrink-0"></div>
+                  <div className="flex-1 space-y-3">
+                    <div className="flex items-center gap-3">
+                      <div className="w-2.5 h-2.5 rounded-full bg-gray-200 dark:bg-gray-700"></div>
+                      <div className="h-5 bg-gray-200 dark:bg-gray-700 rounded w-1/3"></div>
+                      <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded-full w-16"></div>
+                    </div>
+                    <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-full max-w-md"></div>
+                    <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-1/2"></div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : endpoints.length === 0 ? (
         <div className="bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-lg p-12 text-center">
           <div className="w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4">
             <ExternalLink className="w-8 h-8 text-gray-400 dark:text-gray-500" />
@@ -185,7 +202,7 @@ export function EndpointsPage() {
             {endpoints.map((endpoint) => (
               <div
                 key={endpoint.id}
-                className={`bg-white dark:bg-gray-800/50 border rounded-lg p-4 transition flex items-start gap-3 sm:gap-4 ${
+                className={`bg-white dark:bg-gray-800/50 border rounded-lg p-4 transition flex items-start gap-3 sm:gap-4 min-w-0 ${
                   endpoint.is_active
                     ? 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:border-gray-600'
                     : 'border-gray-200 dark:border-gray-800 opacity-60'

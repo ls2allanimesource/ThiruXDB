@@ -151,6 +151,19 @@ export function UsersPage() {
           </div>
 
           <div className="bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+            {isLoadingUsers ? (
+              <div className="animate-pulse">
+                <div className="h-12 bg-gray-100 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700"></div>
+                {[1,2,3,4,5].map(i => (
+                  <div key={i} className="flex border-b border-gray-200 dark:border-gray-800 p-4 gap-4">
+                    <div className="h-4 w-32 bg-gray-200 dark:bg-gray-700 rounded"></div>
+                    <div className="h-4 w-16 bg-gray-200 dark:bg-gray-700 rounded"></div>
+                    <div className="h-4 w-20 bg-gray-200 dark:bg-gray-700 rounded"></div>
+                    <div className="h-4 w-24 bg-gray-200 dark:bg-gray-700 rounded ml-auto"></div>
+                  </div>
+                ))}
+              </div>
+            ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-left text-sm text-gray-700 dark:text-gray-300">
                 <thead className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-400">
@@ -193,6 +206,7 @@ export function UsersPage() {
                 </tbody>
               </table>
             </div>
+            )}
           </div>
         </div>
       )}
@@ -200,57 +214,73 @@ export function UsersPage() {
       {/* Activity Logs Tab */}
       {activeTab === 'activity' && (
         <div className="bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm text-gray-700 dark:text-gray-300">
-              <thead className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-400">
-                <tr>
-                  <th className="px-6 py-4 font-medium">Time</th>
-                  <th className="px-6 py-4 font-medium">User</th>
-                  <th className="px-6 py-4 font-medium">Action</th>
-                  <th className="px-6 py-4 font-medium">IP Address</th>
-                  <th className="px-6 py-4 font-medium">Device Info</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-200 dark:divide-gray-700/50">
-                {logs.map(log => (
-                  <tr key={log.id} className="hover:bg-gray-50 dark:bg-gray-700/20 transition">
-                    <td className="px-6 py-4 whitespace-nowrap"><Clock className="w-3 h-3 inline mr-1 text-gray-400 dark:text-gray-500"/>{new Date(log.created_at).toLocaleString()}</td>
-                    <td className="px-6 py-4 font-medium text-gray-900 dark:text-white">{log.username}</td>
-                    <td className="px-6 py-4 text-gray-700 dark:text-gray-300">{log.action}</td>
-                    <td className="px-6 py-4 font-mono text-xs">
-                      <div className="flex items-center gap-1 text-gray-700 dark:text-gray-300">
-                        <Globe className="w-3 h-3 text-gray-400 dark:text-gray-500" /> {log.ip_address}
-                        <a href={`https://ipinfo.io/${log.ip_address}`} target="_blank" rel="noopener noreferrer" className="ml-1 text-gray-400 hover:text-gray-900 dark:hover:text-white transition" title="Lookup IP">
-                          <Search className="w-3 h-3" />
-                        </a>
-                      </div>
-                      {log.location_data && (
-                        <div className="flex items-center gap-1 text-gray-500 dark:text-gray-400 mt-1">
-                          <MapPin className="w-3 h-3" /> {log.location_data.city}, {log.location_data.country}
-                        </div>
-                      )}
-                    </td>
-                    <td className="px-6 py-4 text-xs text-gray-500 dark:text-gray-400">
-                      <div className="flex items-center gap-1 text-gray-700 dark:text-gray-300">
-                        <Laptop className="w-3 h-3 text-gray-400 dark:text-gray-500"/> {log.device_info}
-                      </div>
-                      {log.location_data?.isp && (
-                        <div className="text-gray-400 dark:text-gray-500 mt-1 pl-4">ISP: {log.location_data.isp}</div>
-                      )}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          {/* Pagination */}
-          <div className="p-4 border-t border-gray-200 dark:border-gray-700 flex justify-between items-center">
-            <span className="text-sm text-gray-500 dark:text-gray-400">Page {page} of {totalPages}</span>
-            <div className="flex gap-2">
-              <button disabled={page === 1} onClick={() => setPage(p => p - 1)} className="px-3 py-1 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white rounded disabled:opacity-50">Prev</button>
-              <button disabled={page === totalPages} onClick={() => setPage(p => p + 1)} className="px-3 py-1 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white rounded disabled:opacity-50">Next</button>
+          {isLoadingLogs ? (
+            <div className="animate-pulse">
+              <div className="h-12 bg-gray-100 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700"></div>
+              {[1,2,3,4,5].map(i => (
+                <div key={i} className="flex border-b border-gray-200 dark:border-gray-800 p-4 gap-4">
+                  <div className="h-4 w-24 bg-gray-200 dark:bg-gray-700 rounded"></div>
+                  <div className="h-4 w-32 bg-gray-200 dark:bg-gray-700 rounded"></div>
+                  <div className="h-4 w-48 bg-gray-200 dark:bg-gray-700 rounded"></div>
+                  <div className="h-4 w-full bg-gray-200 dark:bg-gray-700 rounded ml-auto"></div>
+                </div>
+              ))}
             </div>
-          </div>
+          ) : (
+          <>
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-sm text-gray-700 dark:text-gray-300">
+                <thead className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-400">
+                  <tr>
+                    <th className="px-6 py-4 font-medium">Time</th>
+                    <th className="px-6 py-4 font-medium">User</th>
+                    <th className="px-6 py-4 font-medium">Action</th>
+                    <th className="px-6 py-4 font-medium">IP Address</th>
+                    <th className="px-6 py-4 font-medium">Device Info</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-200 dark:divide-gray-700/50">
+                  {logs.map(log => (
+                    <tr key={log.id} className="hover:bg-gray-50 dark:bg-gray-700/20 transition">
+                      <td className="px-6 py-4 whitespace-nowrap"><Clock className="w-3 h-3 inline mr-1 text-gray-400 dark:text-gray-500"/>{new Date(log.created_at).toLocaleString()}</td>
+                      <td className="px-6 py-4 font-medium text-gray-900 dark:text-white">{log.username}</td>
+                      <td className="px-6 py-4 text-gray-700 dark:text-gray-300">{log.action}</td>
+                      <td className="px-6 py-4 font-mono text-xs">
+                        <div className="flex items-center gap-1 text-gray-700 dark:text-gray-300">
+                          <Globe className="w-3 h-3 text-gray-400 dark:text-gray-500" /> {log.ip_address}
+                          <a href={`https://ipinfo.io/${log.ip_address}`} target="_blank" rel="noopener noreferrer" className="ml-1 text-gray-400 hover:text-gray-900 dark:hover:text-white transition" title="Lookup IP">
+                            <Search className="w-3 h-3" />
+                          </a>
+                        </div>
+                        {log.location_data && (
+                          <div className="flex items-center gap-1 text-gray-500 dark:text-gray-400 mt-1">
+                            <MapPin className="w-3 h-3" /> {log.location_data.city}, {log.location_data.country}
+                          </div>
+                        )}
+                      </td>
+                      <td className="px-6 py-4 text-xs text-gray-500 dark:text-gray-400">
+                        <div className="flex items-center gap-1 text-gray-700 dark:text-gray-300">
+                          <Laptop className="w-3 h-3 text-gray-400 dark:text-gray-500"/> {log.device_info}
+                        </div>
+                        {log.location_data?.isp && (
+                          <div className="text-gray-400 dark:text-gray-500 mt-1 pl-4">ISP: {log.location_data.isp}</div>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            {/* Pagination */}
+            <div className="p-4 border-t border-gray-200 dark:border-gray-700 flex justify-between items-center">
+              <span className="text-sm text-gray-500 dark:text-gray-400">Page {page} of {totalPages}</span>
+              <div className="flex gap-2">
+                <button disabled={page === 1} onClick={() => setPage(p => p - 1)} className="px-3 py-1 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white rounded disabled:opacity-50">Prev</button>
+                <button disabled={page === totalPages} onClick={() => setPage(p => p + 1)} className="px-3 py-1 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white rounded disabled:opacity-50">Next</button>
+              </div>
+            </div>
+          </>
+          )}
         </div>
       )}
 
@@ -383,7 +413,17 @@ function UserLogsModal({ user, onClose }: { user: User; onClose: () => void }) {
 
         <div className="flex-1 overflow-y-auto p-6">
           {isLoading && logs.length === 0 ? (
-            <div className="text-center py-12 text-gray-500 dark:text-gray-400">Loading logs...</div>
+            <div className="bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden animate-pulse">
+              <div className="h-12 bg-gray-100 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700"></div>
+              {[1,2,3,4].map(i => (
+                <div key={i} className="flex border-b border-gray-200 dark:border-gray-800 p-4 gap-4">
+                  <div className="h-4 w-24 bg-gray-200 dark:bg-gray-700 rounded"></div>
+                  <div className="h-4 w-32 bg-gray-200 dark:bg-gray-700 rounded"></div>
+                  <div className="h-4 w-48 bg-gray-200 dark:bg-gray-700 rounded"></div>
+                  <div className="h-4 w-full bg-gray-200 dark:bg-gray-700 rounded ml-auto"></div>
+                </div>
+              ))}
+            </div>
           ) : logs.length === 0 ? (
             <div className="text-center py-12 text-gray-500 dark:text-gray-400">No activity logs found for this user.</div>
           ) : (
