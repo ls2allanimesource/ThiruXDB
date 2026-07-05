@@ -70,7 +70,7 @@ export function DashboardPage() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <Loader2 className="w-8 h-8 text-blue-500 animate-spin" />
+        <Loader2 className="w-8 h-8 text-gray-900 dark:text-gray-100 animate-spin" />
       </div>
     );
   }
@@ -317,7 +317,7 @@ export function DashboardPage() {
                     <span className="text-lg font-bold text-gray-900 dark:text-white">
                       {recordCount.toLocaleString()}
                     </span>
-                    <span className="text-xs font-medium px-2 py-1 bg-blue-500/10 text-blue-400 rounded-md whitespace-nowrap hidden sm:inline-block">
+                    <span className="text-xs font-medium px-2 py-1 bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 rounded-md whitespace-nowrap hidden sm:inline-block">
                       {percentageOfTotal}% of total db
                     </span>
                   </div>
@@ -345,7 +345,7 @@ function StatCard({
   color: 'blue' | 'green' | 'purple' | 'red';
 }) {
   const colorClasses = {
-    blue: 'from-blue-500 to-cyan-400 shadow-blue-500/25',
+    blue: 'from-blue-500 to-cyan-400 shadow-gray-900/10 dark:shadow-white/10',
     green: 'from-green-500 to-emerald-400 shadow-green-500/25',
     purple: 'from-purple-500 to-pink-400 shadow-purple-500/25',
     red: 'from-red-500 to-orange-400 shadow-red-500/25',

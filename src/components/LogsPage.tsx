@@ -31,7 +31,7 @@ export function LogsPage() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <RefreshCw className="w-8 h-8 text-blue-500 animate-spin" />
+        <RefreshCw className="w-8 h-8 text-gray-900 dark:text-gray-100 animate-spin" />
       </div>
     );
   }
@@ -48,7 +48,7 @@ export function LogsPage() {
         <select
           value={selectedEndpoint}
           onChange={(e) => setSelectedEndpoint(e.target.value)}
-          className="bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-gray-900 dark:focus:ring-gray-100"
         >
           <option value="all">All Endpoints</option>
           {endpoints.map((ep) => (
@@ -125,7 +125,7 @@ export function LogsPage() {
                   <td className="px-4 py-3 text-right text-green-400">
                     {log.records_created}
                   </td>
-                  <td className="px-4 py-3 text-right text-blue-400">
+                  <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-300">
                     {log.records_updated}
                   </td>
                   <td className="px-4 py-3 text-right text-gray-500 dark:text-gray-400">

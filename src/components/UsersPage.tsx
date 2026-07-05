@@ -125,7 +125,7 @@ export function UsersPage() {
         <button
           onClick={() => setActiveTab('users')}
           className={`flex items-center gap-2 px-4 py-2 border-b-2 font-medium transition ${
-            activeTab === 'users' ? 'border-blue-500 text-blue-400' : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:text-gray-300'
+            activeTab === 'users' ? 'border-blue-500 text-gray-700 dark:text-gray-300' : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:text-gray-300'
           }`}
         >
           <Users className="w-4 h-4" /> Users
@@ -133,7 +133,7 @@ export function UsersPage() {
         <button
           onClick={() => setActiveTab('activity')}
           className={`flex items-center gap-2 px-4 py-2 border-b-2 font-medium transition ${
-            activeTab === 'activity' ? 'border-blue-500 text-blue-400' : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:text-gray-300'
+            activeTab === 'activity' ? 'border-blue-500 text-gray-700 dark:text-gray-300' : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:text-gray-300'
           }`}
         >
           <Activity className="w-4 h-4" /> Activity Logs
@@ -144,7 +144,7 @@ export function UsersPage() {
       {activeTab === 'users' && (
         <div className="space-y-4">
           <div className="flex justify-end">
-            <button onClick={() => openForm()} className="flex items-center gap-2 bg-blue-600 text-gray-900 dark:text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition shadow-sm shadow-blue-500/20">
+            <button onClick={() => openForm()} className="flex items-center gap-2 bg-gray-900 text-white dark:bg-white dark:text-gray-900 px-4 py-2 rounded-lg hover:bg-gray-800 dark:hover:bg-gray-200 transition shadow-sm shadow-gray-900/10 dark:shadow-white/10">
               <UserPlus className="w-4 h-4" /> Add User
             </button>
           </div>
@@ -168,7 +168,7 @@ export function UsersPage() {
                       <td className="px-6 py-4">
                         <span className={`px-2 py-1 rounded-md text-xs font-medium uppercase ${
                           u.role === 'admin' ? 'bg-purple-500/10 text-purple-400' :
-                          u.role === 'editor' ? 'bg-blue-500/10 text-blue-400' :
+                          u.role === 'editor' ? 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300' :
                           'bg-slate-500/10 text-gray-500 dark:text-gray-400'
                         }`}>
                           {u.role}
@@ -182,7 +182,7 @@ export function UsersPage() {
                       </td>
                       <td className="px-6 py-4 text-right whitespace-nowrap">
                         <button onClick={() => setViewingLogsForUser(u)} className="p-2 text-gray-500 dark:text-gray-400 hover:text-green-400 transition" title="View Logs"><Activity className="w-4 h-4"/></button>
-                        <button onClick={() => openForm(u)} className="p-2 text-gray-500 dark:text-gray-400 hover:text-blue-400 transition" title="Edit"><Edit className="w-4 h-4"/></button>
+                        <button onClick={() => openForm(u)} className="p-2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:text-gray-300 transition" title="Edit"><Edit className="w-4 h-4"/></button>
                         {u.id !== user?.id && (
                           <button onClick={() => handleDelete(u.id)} className="p-2 text-gray-500 dark:text-gray-400 hover:text-red-400 transition" title="Delete"><Trash2 className="w-4 h-4"/></button>
                         )}
@@ -215,7 +215,7 @@ export function UsersPage() {
                   <tr key={log.id} className="hover:bg-gray-50 dark:bg-gray-700/20 transition">
                     <td className="px-6 py-4 whitespace-nowrap"><Clock className="w-3 h-3 inline mr-1 text-gray-400 dark:text-gray-500"/>{new Date(log.created_at).toLocaleString()}</td>
                     <td className="px-6 py-4 font-medium text-gray-900 dark:text-white">{log.username}</td>
-                    <td className="px-6 py-4 text-blue-400">{log.action}</td>
+                    <td className="px-6 py-4 text-gray-700 dark:text-gray-300">{log.action}</td>
                     <td className="px-6 py-4 font-mono text-xs">
                       <div className="flex items-center gap-1 text-gray-700 dark:text-gray-300">
                         <Globe className="w-3 h-3 text-gray-400 dark:text-gray-500" /> {log.ip_address}
@@ -261,15 +261,15 @@ export function UsersPage() {
             <form onSubmit={handleSave} className="p-6 space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Username</label>
-                <input required type="text" value={formData.username} onChange={e => setFormData({...formData, username: e.target.value})} disabled={!!editingUser} className="w-full bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg px-4 py-2 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50" />
+                <input required type="text" value={formData.username} onChange={e => setFormData({...formData, username: e.target.value})} disabled={!!editingUser} className="w-full bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg px-4 py-2 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-gray-900 dark:focus:ring-gray-100 disabled:opacity-50" />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{editingUser ? 'New Password (leave blank to keep)' : 'Password'}</label>
-                <input required={!editingUser} type="password" value={formData.password} onChange={e => setFormData({...formData, password: e.target.value})} className="w-full bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg px-4 py-2 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                <input required={!editingUser} type="password" value={formData.password} onChange={e => setFormData({...formData, password: e.target.value})} className="w-full bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg px-4 py-2 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-gray-900 dark:focus:ring-gray-100" />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Role</label>
-                <select value={formData.role} onChange={e => setFormData({...formData, role: e.target.value as UserRole})} className="w-full bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg px-4 py-2 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <select value={formData.role} onChange={e => setFormData({...formData, role: e.target.value as UserRole})} className="w-full bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg px-4 py-2 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-gray-900 dark:focus:ring-gray-100">
                   <option value="admin">Admin (Full Access)</option>
                   <option value="editor">Editor (Can't manage users)</option>
                   <option value="viewer">Viewer (Read Only)</option>
@@ -283,7 +283,7 @@ export function UsersPage() {
               )}
               <div className="pt-4 flex gap-3">
                 <button type="button" onClick={() => setShowForm(false)} className="flex-1 px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg hover:bg-slate-600 transition">Cancel</button>
-                <button type="submit" className="flex-1 px-4 py-2 bg-blue-600 text-gray-900 dark:text-white rounded-lg hover:bg-blue-700 transition flex items-center justify-center gap-2">
+                <button type="submit" className="flex-1 px-4 py-2 bg-gray-900 text-white dark:bg-white dark:text-gray-900 rounded-lg hover:bg-gray-800 dark:hover:bg-gray-200 transition flex items-center justify-center gap-2">
                   <Save className="w-4 h-4"/> Save User
                 </button>
               </div>
@@ -361,7 +361,7 @@ function UserLogsModal({ user, onClose }: { user: User; onClose: () => void }) {
       <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl w-full max-w-5xl max-h-[90vh] overflow-hidden shadow-2xl flex flex-col">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700 gap-4">
           <div>
-            <h3 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2"><Activity className="w-5 h-5 text-blue-400" /> Activity Logs: {user.username}</h3>
+            <h3 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2"><Activity className="w-5 h-5 text-gray-700 dark:text-gray-300" /> Activity Logs: {user.username}</h3>
             <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Detailed history of this user's actions</p>
           </div>
           <div className="flex items-center gap-3 w-full sm:w-auto">
@@ -398,7 +398,7 @@ function UserLogsModal({ user, onClose }: { user: User; onClose: () => void }) {
                     {logs.map(log => (
                       <tr key={log.id} className="hover:bg-white dark:bg-gray-800/50 transition">
                         <td className="px-6 py-4 whitespace-nowrap"><Clock className="w-3 h-3 inline mr-1 text-gray-400 dark:text-gray-500"/>{new Date(log.created_at).toLocaleString()}</td>
-                        <td className="px-6 py-4 text-blue-400 font-medium">{log.action}</td>
+                        <td className="px-6 py-4 text-gray-700 dark:text-gray-300 font-medium">{log.action}</td>
                         <td className="px-6 py-4 font-mono text-xs">
                           <div className="flex items-center gap-1 text-gray-700 dark:text-gray-300">
                             <Globe className="w-3 h-3 text-gray-400 dark:text-gray-500" /> {log.ip_address}

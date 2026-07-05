@@ -110,7 +110,7 @@ export function EndpointForm({ endpoint, onSave, onCancel }: EndpointFormProps) 
     setFormData((prev) => ({ ...prev, path_variables: prev.path_variables.filter((_, i) => i !== index) }));
   };
 
-  const inputCls = "w-full bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2.5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500";
+  const inputCls = "w-full bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2.5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-gray-900 dark:focus:ring-gray-100";
 
   return (
     <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
@@ -142,7 +142,7 @@ export function EndpointForm({ endpoint, onSave, onCancel }: EndpointFormProps) 
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Status</label>
                 <label className="flex items-center gap-2 mt-3">
-                  <input type="checkbox" checked={formData.is_active} onChange={(e) => setFormData({ ...formData, is_active: e.target.checked })} className="w-5 h-5 rounded border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-700 text-blue-500 focus:ring-blue-500" />
+                  <input type="checkbox" checked={formData.is_active} onChange={(e) => setFormData({ ...formData, is_active: e.target.checked })} className="w-5 h-5 rounded border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-gray-900 dark:focus:ring-gray-100" />
                   <span className="text-gray-700 dark:text-gray-300">Active</span>
                 </label>
               </div>
@@ -172,7 +172,7 @@ export function EndpointForm({ endpoint, onSave, onCancel }: EndpointFormProps) 
               <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mb-4">
                 {(['none', 'api_key', 'bearer', 'basic'] as const).map((type) => (
                   <button key={type} type="button" onClick={() => setFormData({ ...formData, auth_type: type, auth_config: {} })}
-                    className={`px-4 py-2 rounded-lg text-sm font-medium transition ${formData.auth_type === type ? 'bg-blue-600 text-gray-900 dark:text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 hover:bg-slate-600'}`}>
+                    className={`px-4 py-2 rounded-lg text-sm font-medium transition ${formData.auth_type === type ? 'bg-gray-900 text-white dark:bg-white dark:text-gray-900' : 'bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 hover:bg-slate-600'}`}>
                     {type.replace('_', ' ').toUpperCase()}
                   </button>
                 ))}
@@ -200,21 +200,21 @@ export function EndpointForm({ endpoint, onSave, onCancel }: EndpointFormProps) 
               <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mb-4">
                 {(['none', 'offset', 'cursor', 'page'] as const).map((type) => (
                   <button key={type} type="button" onClick={() => setFormData({ ...formData, pagination_type: type, pagination_config: {} })}
-                    className={`px-4 py-2 rounded-lg text-sm font-medium transition ${formData.pagination_type === type ? 'bg-blue-600 text-gray-900 dark:text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 hover:bg-slate-600'}`}>
+                    className={`px-4 py-2 rounded-lg text-sm font-medium transition ${formData.pagination_type === type ? 'bg-gray-900 text-white dark:bg-white dark:text-gray-900' : 'bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 hover:bg-slate-600'}`}>
                     {type.toUpperCase()}
                   </button>
                 ))}
               </div>
               {formData.pagination_type === 'offset' && (
                 <div className="grid grid-cols-2 gap-4">
-                  <input type="text" placeholder="Limit param (e.g., limit)" value={formData.pagination_config.limit_param || ''} onChange={(e) => setFormData({ ...formData, pagination_config: { ...formData.pagination_config, limit_param: e.target.value } })} className="bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2.5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
-                  <input type="text" placeholder="Offset param (e.g., offset)" value={formData.pagination_config.offset_param || ''} onChange={(e) => setFormData({ ...formData, pagination_config: { ...formData.pagination_config, offset_param: e.target.value } })} className="bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2.5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                  <input type="text" placeholder="Limit param (e.g., limit)" value={formData.pagination_config.limit_param || ''} onChange={(e) => setFormData({ ...formData, pagination_config: { ...formData.pagination_config, limit_param: e.target.value } })} className="bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2.5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-gray-900 dark:focus:ring-gray-100" />
+                  <input type="text" placeholder="Offset param (e.g., offset)" value={formData.pagination_config.offset_param || ''} onChange={(e) => setFormData({ ...formData, pagination_config: { ...formData.pagination_config, offset_param: e.target.value } })} className="bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2.5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-gray-900 dark:focus:ring-gray-100" />
                 </div>
               )}
               {formData.pagination_type === 'page' && (
                 <div className="grid grid-cols-2 gap-4">
-                  <input type="text" placeholder="Page param (e.g., page)" value={formData.pagination_config.page_param || ''} onChange={(e) => setFormData({ ...formData, pagination_config: { ...formData.pagination_config, page_param: e.target.value } })} className="bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2.5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
-                  <input type="text" placeholder="Limit param (e.g., per_page)" value={formData.pagination_config.limit_param || ''} onChange={(e) => setFormData({ ...formData, pagination_config: { ...formData.pagination_config, limit_param: e.target.value } })} className="bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2.5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                  <input type="text" placeholder="Page param (e.g., page)" value={formData.pagination_config.page_param || ''} onChange={(e) => setFormData({ ...formData, pagination_config: { ...formData.pagination_config, page_param: e.target.value } })} className="bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2.5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-gray-900 dark:focus:ring-gray-100" />
+                  <input type="text" placeholder="Limit param (e.g., per_page)" value={formData.pagination_config.limit_param || ''} onChange={(e) => setFormData({ ...formData, pagination_config: { ...formData.pagination_config, limit_param: e.target.value } })} className="bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2.5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-gray-900 dark:focus:ring-gray-100" />
                 </div>
               )}
               {formData.pagination_type === 'cursor' && (
@@ -262,7 +262,7 @@ export function EndpointForm({ endpoint, onSave, onCancel }: EndpointFormProps) 
                         type="text"
                         value={newPathVariable.variable}
                         onChange={(e) => setNewPathVariable({ ...newPathVariable, variable: e.target.value })}
-                        className="w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-sm text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
+                        className="w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-sm text-gray-900 dark:text-white focus:ring-2 focus:ring-gray-900 dark:focus:ring-gray-100"
                         placeholder="{studentID}"
                       />
                     </div>
@@ -272,7 +272,7 @@ export function EndpointForm({ endpoint, onSave, onCancel }: EndpointFormProps) 
                         type="text"
                         value={newPathVariable.source_collection}
                         onChange={(e) => setNewPathVariable({ ...newPathVariable, source_collection: e.target.value })}
-                        className="w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-sm text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
+                        className="w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-sm text-gray-900 dark:text-white focus:ring-2 focus:ring-gray-900 dark:focus:ring-gray-100"
                         placeholder="Students"
                       />
                     </div>
@@ -282,7 +282,7 @@ export function EndpointForm({ endpoint, onSave, onCancel }: EndpointFormProps) 
                         type="text"
                         value={newPathVariable.source_field}
                         onChange={(e) => setNewPathVariable({ ...newPathVariable, source_field: e.target.value })}
-                        className="w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-sm text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
+                        className="w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-sm text-gray-900 dark:text-white focus:ring-2 focus:ring-gray-900 dark:focus:ring-gray-100"
                         placeholder="mapped_data.id"
                       />
                     </div>
@@ -291,7 +291,7 @@ export function EndpointForm({ endpoint, onSave, onCancel }: EndpointFormProps) 
                     type="button"
                     onClick={addPathVariable}
                     disabled={!newPathVariable.variable || !newPathVariable.source_collection || !newPathVariable.source_field}
-                    className="px-4 py-2 bg-blue-600 text-gray-900 dark:text-white rounded-lg hover:bg-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                    className="px-4 py-2 bg-gray-900 text-white dark:bg-white dark:text-gray-900 rounded-lg hover:bg-gray-800 dark:hover:bg-gray-200 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                   >
                     <Plus className="w-4 h-4" />
                     <span className="hidden sm:inline">Add</span>
@@ -307,7 +307,7 @@ export function EndpointForm({ endpoint, onSave, onCancel }: EndpointFormProps) 
               <div className="space-y-2 mb-4">
                 {formData.field_mappings.map((mapping, index) => (
                   <div key={index} className="flex items-center gap-2 bg-gray-100 dark:bg-gray-700/50 rounded-lg p-2">
-                    <span className="font-mono text-sm text-blue-400 flex-1">{mapping.sourceField}</span>
+                    <span className="font-mono text-sm text-gray-700 dark:text-gray-300 flex-1">{mapping.sourceField}</span>
                     <span className="text-gray-400 dark:text-gray-500">→</span>
                     <span className="font-mono text-sm text-green-400 flex-1">{mapping.targetField}</span>
                     <span className="text-xs text-gray-400 dark:text-gray-500">({mapping.transform})</span>
@@ -316,15 +316,15 @@ export function EndpointForm({ endpoint, onSave, onCancel }: EndpointFormProps) 
                 ))}
               </div>
               <div className="flex flex-wrap gap-2">
-                <input type="text" placeholder="Source field" value={newMapping.sourceField} onChange={(e) => setNewMapping({ ...newMapping, sourceField: e.target.value })} className="flex-1 min-w-32 bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
-                <input type="text" placeholder="Target field" value={newMapping.targetField} onChange={(e) => setNewMapping({ ...newMapping, targetField: e.target.value })} className="flex-1 min-w-32 bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
-                <select value={newMapping.transform} onChange={(e) => setNewMapping({ ...newMapping, transform: e.target.value as FieldMapping['transform'] })} className="bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <input type="text" placeholder="Source field" value={newMapping.sourceField} onChange={(e) => setNewMapping({ ...newMapping, sourceField: e.target.value })} className="flex-1 min-w-32 bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-gray-900 dark:focus:ring-gray-100" />
+                <input type="text" placeholder="Target field" value={newMapping.targetField} onChange={(e) => setNewMapping({ ...newMapping, targetField: e.target.value })} className="flex-1 min-w-32 bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-gray-900 dark:focus:ring-gray-100" />
+                <select value={newMapping.transform} onChange={(e) => setNewMapping({ ...newMapping, transform: e.target.value as FieldMapping['transform'] })} className="bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-gray-900 dark:focus:ring-gray-100">
                   <option value="string">String</option>
                   <option value="number">Number</option>
                   <option value="boolean">Boolean</option>
                   <option value="date">Date</option>
                 </select>
-                <button type="button" onClick={addMapping} className="px-4 py-2 bg-blue-600 text-gray-900 dark:text-white rounded-lg hover:bg-blue-700 transition flex items-center gap-1"><Plus className="w-4 h-4" />Add</button>
+                <button type="button" onClick={addMapping} className="px-4 py-2 bg-gray-900 text-white dark:bg-white dark:text-gray-900 rounded-lg hover:bg-gray-800 dark:hover:bg-gray-200 transition flex items-center gap-1"><Plus className="w-4 h-4" />Add</button>
               </div>
             </div>
 
@@ -352,7 +352,7 @@ export function EndpointForm({ endpoint, onSave, onCancel }: EndpointFormProps) 
             </button>
             <div className="flex w-full sm:w-auto gap-3 justify-end">
               <button type="button" onClick={onCancel} className="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg hover:bg-slate-600 transition">Cancel</button>
-              <button type="submit" disabled={isLoading || !formData.name || !formData.base_url} className="flex items-center gap-2 px-6 py-2 bg-blue-600 text-gray-900 dark:text-white rounded-lg hover:bg-blue-700 transition disabled:opacity-50">
+              <button type="submit" disabled={isLoading || !formData.name || !formData.base_url} className="flex items-center gap-2 px-6 py-2 bg-gray-900 text-white dark:bg-white dark:text-gray-900 rounded-lg hover:bg-gray-800 dark:hover:bg-gray-200 transition disabled:opacity-50">
                 {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
                 Save Endpoint
               </button>

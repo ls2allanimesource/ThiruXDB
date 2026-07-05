@@ -29,7 +29,7 @@ export function LoginPage() {
       <div className="w-full max-w-md">
         <div className="bg-white/5 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/10 p-8">
           <div className="flex flex-col items-center mb-8">
-            <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-cyan-400 rounded-2xl flex items-center justify-center mb-4 shadow-sm shadow-blue-500/25">
+            <div className="w-16 h-16 bg-gray-900 dark:bg-white rounded-2xl flex items-center justify-center mb-4 shadow-sm shadow-gray-900/10 dark:shadow-white/10">
               <Database className="w-8 h-8 text-gray-900 dark:text-white" />
             </div>
             <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Welcome To ThiruXDB</h1>
@@ -47,7 +47,7 @@ export function LoginPage() {
                   type="text"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
-                  className="w-full bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-lg py-3 pl-11 pr-4 text-gray-900 dark:text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                  className="w-full bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-lg py-3 pl-11 pr-4 text-gray-900 dark:text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-gray-900 dark:focus:ring-gray-100 focus:border-transparent transition"
                   placeholder="Enter username"
                   required
                 />
@@ -64,7 +64,7 @@ export function LoginPage() {
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-lg py-3 pl-11 pr-4 text-gray-900 dark:text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                  className="w-full bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-lg py-3 pl-11 pr-4 text-gray-900 dark:text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-gray-900 dark:focus:ring-gray-100 focus:border-transparent transition"
                   placeholder="Enter password"
                   required
                 />
@@ -81,7 +81,7 @@ export function LoginPage() {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-gradient-to-r from-blue-600 to-cyan-500 text-gray-900 dark:text-white font-semibold py-3 rounded-lg hover:from-blue-700 hover:to-cyan-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-slate-900 transition disabled:opacity-50 disabled:cursor-not-allowed shadow-sm shadow-blue-500/25"
+              className="w-full bg-gradient-to-r from-blue-600 to-cyan-500 text-gray-900 dark:text-white font-semibold py-3 rounded-lg hover:from-blue-700 hover:to-cyan-600 focus:outline-none focus:ring-2 focus:ring-gray-900 dark:focus:ring-gray-100 focus:ring-offset-2 focus:ring-offset-slate-900 transition disabled:opacity-50 disabled:cursor-not-allowed shadow-sm shadow-gray-900/10 dark:shadow-white/10"
             >
               {isLoading ? 'Signing in...' : 'Sign In'}
             </button>

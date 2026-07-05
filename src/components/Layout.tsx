@@ -41,7 +41,7 @@ export function Layout({ children, currentPage, onNavigate }: LayoutProps) {
       {/* Mobile top navbar */}
       <div className="lg:hidden fixed top-0 left-0 right-0 h-16 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 z-50 flex items-center px-4 justify-between transition-colors duration-200">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-cyan-400 rounded-lg flex items-center justify-center shadow-lg shrink-0">
+          <div className="w-8 h-8 bg-gray-900 dark:bg-white rounded-lg flex items-center justify-center shadow-lg shrink-0">
             <Database className="w-4 h-4 text-white" />
           </div>
           <h1 className="text-base font-bold text-gray-900 dark:text-white">ThiruXDB</h1>
@@ -71,7 +71,7 @@ export function Layout({ children, currentPage, onNavigate }: LayoutProps) {
           {/* Logo */}
           <div className="hidden lg:block p-6 border-b border-gray-200 dark:border-gray-800 transition-colors">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-cyan-400 rounded-xl flex items-center justify-center shadow-lg shrink-0">
+              <div className="w-10 h-10 bg-gray-900 dark:bg-white rounded-xl flex items-center justify-center shadow-lg shrink-0">
                 <Database className="w-5 h-5 text-white" />
               </div>
               <div className="min-w-0">
@@ -90,7 +90,7 @@ export function Layout({ children, currentPage, onNavigate }: LayoutProps) {
                   setSidebarOpen(false);
                 }}
                 className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${currentPage === item.id
-                  ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-500/30'
+                  ? 'bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white font-semibold'
                   : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white'
                   }`}
               >
@@ -105,7 +105,7 @@ export function Layout({ children, currentPage, onNavigate }: LayoutProps) {
                   setSidebarOpen(false);
                 }}
                 className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${currentPage === 'users'
-                  ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-500/30'
+                  ? 'bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white font-semibold'
                   : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white'
                   }`}
               >

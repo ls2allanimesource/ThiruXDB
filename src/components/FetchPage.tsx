@@ -64,7 +64,7 @@ export function FetchPage() {
     setFetchingAll(false);
   };
 
-  if (isLoading) return <div className="flex items-center justify-center h-64"><RefreshCw className="w-8 h-8 text-blue-500 animate-spin" /></div>;
+  if (isLoading) return <div className="flex items-center justify-center h-64"><RefreshCw className="w-8 h-8 text-gray-900 dark:text-gray-100 animate-spin" /></div>;
 
   return (
     <div className="space-y-6">
@@ -77,7 +77,7 @@ export function FetchPage() {
           <div className="flex flex-wrap items-center gap-4">
             <div className="flex items-center gap-2 bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-1.5 shrink-0">
               <span className="text-sm text-gray-500 dark:text-gray-400">Skip</span>
-              <input type="number" min="0" value={globalSkip} onChange={(e) => setGlobalSkip(parseInt(e.target.value) || 0)} className="w-16 bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded px-2 py-1 text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-1 focus:ring-blue-500" />
+              <input type="number" min="0" value={globalSkip} onChange={(e) => setGlobalSkip(parseInt(e.target.value) || 0)} className="w-16 bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded px-2 py-1 text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-1 focus:ring-gray-900 dark:focus:ring-gray-100" />
             </div>
             <button onClick={fetchSelectedEndpoints} disabled={fetchingAll || selectedIds.size === 0} className="flex items-center gap-2 px-4 py-2 bg-green-600 text-gray-900 dark:text-white rounded-lg hover:bg-green-700 transition shadow-sm shadow-green-500/20 disabled:opacity-50 shrink-0">
               {fetchingAll ? <Loader2 className="w-5 h-5 animate-spin" /> : <RefreshCw className="w-5 h-5" />}
@@ -102,7 +102,7 @@ export function FetchPage() {
                   type="checkbox"
                   checked={endpoints.length > 0 && selectedIds.size === endpoints.length}
                   onChange={(e) => handleSelectAll(e.target.checked)}
-                  className="w-5 h-5 rounded border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-700 text-blue-500 focus:ring-blue-500"
+                  className="w-5 h-5 rounded border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-gray-900 dark:focus:ring-gray-100"
                 />
                 <span className="text-gray-700 dark:text-gray-300 font-medium">Select All</span>
               </label>
@@ -120,7 +120,7 @@ export function FetchPage() {
                         type="checkbox"
                         checked={selectedIds.has(endpoint.id)}
                         onChange={(e) => handleSelectOne(endpoint.id, e.target.checked)}
-                        className="w-5 h-5 rounded border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-700 text-blue-500 focus:ring-blue-500 cursor-pointer"
+                        className="w-5 h-5 rounded border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-gray-900 dark:focus:ring-gray-100 cursor-pointer"
                       />
                     </div>
                     <div className="flex-1 min-w-0">
@@ -137,7 +137,7 @@ export function FetchPage() {
                         
                         <div className="flex items-center justify-between sm:justify-end flex-wrap gap-4 w-full sm:w-auto shrink-0 border-t border-gray-100 dark:border-gray-700/50 sm:border-0 pt-3 sm:pt-0 mt-2 sm:mt-0">
                           {isFetching && progress && (
-                            <div className="flex items-center gap-2 text-sm text-blue-400 font-medium">
+                            <div className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300 font-medium">
                               <span>{progress.current} / {progress.total}</span>
                               <div className="w-24 h-1.5 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
                                 <div className="h-full bg-blue-500 transition-all duration-300" style={{ width: `${Math.min(100, (progress.current / (progress.total || 1)) * 100)}%` }} />
@@ -149,7 +149,7 @@ export function FetchPage() {
                           {!isViewer && !isFetching && (
                             <div className="flex items-center gap-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg px-2 py-1">
                               <span className="text-xs text-gray-500 dark:text-gray-400">Skip</span>
-                              <input type="number" min="0" value={skipOffsets[endpoint.id] || 0} onChange={(e) => setSkipOffsets({ ...skipOffsets, [endpoint.id]: parseInt(e.target.value) || 0 })} className="w-14 bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded px-1.5 py-1 text-gray-900 dark:text-white text-xs focus:outline-none focus:ring-1 focus:ring-blue-500" />
+                              <input type="number" min="0" value={skipOffsets[endpoint.id] || 0} onChange={(e) => setSkipOffsets({ ...skipOffsets, [endpoint.id]: parseInt(e.target.value) || 0 })} className="w-14 bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded px-1.5 py-1 text-gray-900 dark:text-white text-xs focus:outline-none focus:ring-1 focus:ring-gray-900 dark:focus:ring-gray-100" />
                             </div>
                           )}
 
@@ -159,7 +159,7 @@ export function FetchPage() {
                               Cancel
                             </button>
                           ) : (
-                            <button onClick={() => fetchFromEndpoint(endpoint)} className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition disabled:opacity-50 shadow-sm shadow-blue-500/20">
+                            <button onClick={() => fetchFromEndpoint(endpoint)} className="flex items-center gap-2 px-4 py-2 bg-gray-900 text-white dark:bg-white dark:text-gray-900 rounded-lg hover:bg-gray-800 dark:hover:bg-gray-200 transition disabled:opacity-50 shadow-sm shadow-gray-900/10 dark:shadow-white/10">
                               <Play className="w-5 h-5" />
                               Fetch
                             </button>
@@ -200,7 +200,7 @@ export function FetchPage() {
                     <td className="px-4 py-3"><span className={`inline-flex items-center gap-1 text-sm ${log.status==='success'?'text-green-400':log.status==='partial'?'text-yellow-400':'text-red-400'}`}>{log.status==='success'?<CheckCircle className="w-4 h-4"/>:log.status==='partial'?<AlertCircle className="w-4 h-4"/>:<XCircle className="w-4 h-4"/>}{log.status}</span></td>
                     <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-300">{log.records_fetched}</td>
                     <td className="px-4 py-3 text-right text-green-400">{log.records_created}</td>
-                    <td className="px-4 py-3 text-right text-blue-400">{log.records_updated}</td>
+                    <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-300">{log.records_updated}</td>
                     <td className="px-4 py-3 text-right text-gray-500 dark:text-gray-400">{log.duration_ms}ms</td>
                     <td className="px-4 py-3 text-gray-400 dark:text-gray-500 text-sm">{new Date(log.created_at).toLocaleString()}</td>
                   </tr>
