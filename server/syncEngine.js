@@ -191,6 +191,7 @@ export async function runSyncJob(endpointIdStr, skipOffset) {
 
       recordsFetched += items.length;
 
+      const bulkOps = [];
       for (let i = 0; i < items.length; i++) {
         flushState();
         if (jobState.cancelled) {
@@ -221,49 +222,54 @@ export async function runSyncJob(endpointIdStr, skipOffset) {
         const searchText = JSON.stringify(item);
 
         if (externalId) {
-          const filter = { endpoint_id: endpointIdStr, external_id: externalId };
-          const existing = await db.collection(targetCol).findOne(filter);
-          if (existing) {
-            await db.collection(targetCol).updateOne(filter, {
-              $set: {
+          bulkOps.push({
+            updateOne: {
+              filter: { endpoint_id: endpointIdStr, external_id: externalId },
+              update: {
+                $set: {
+                  raw_data: item,
+                  mapped_data: mappedData,
+                  _search_text: searchText,
+                  updated_at: now,
+                  fetched_at: now
+                },
+                $setOnInsert: {
+                  created_at: now
+                }
+              },
+              upsert: true
+            }
+          });
+        } else {
+          bulkOps.push({
+            insertOne: {
+              document: {
+                endpoint_id: endpointIdStr,
+                external_id: null,
                 raw_data: item,
                 mapped_data: mappedData,
-                fetched_at: now,
-                updated_at: now,
                 _search_text: searchText,
-              },
-            });
-            recordsUpdated++;
-          } else {
-            await db.collection(targetCol).insertOne({
-              endpoint_id: endpointIdStr,
-              external_id: externalId,
-              raw_data: item,
-              mapped_data: mappedData,
-              _search_text: searchText,
-              fetched_at: now,
-              created_at: now,
-              updated_at: now,
-            });
-            recordsCreated++;
-          }
-        } else {
-          await db.collection(targetCol).insertOne({
-            endpoint_id: endpointIdStr,
-            external_id: null,
-            raw_data: item,
-            mapped_data: mappedData,
-            _search_text: searchText,
-            fetched_at: now,
-            created_at: now,
-            updated_at: now,
+                fetched_at: now,
+                created_at: now,
+                updated_at: now,
+              }
+            }
           });
-          recordsCreated++;
         }
 
-        if (!isMultiUrl && i % 10 === 0) {
-          jobState.current = i;
+        if (bulkOps.length >= 1000) {
+          const result = await db.collection(targetCol).bulkWrite(bulkOps, { ordered: false });
+          recordsUpdated += result.modifiedCount || 0;
+          recordsCreated += (result.upsertedCount || 0) + (result.insertedCount || 0);
+          bulkOps.length = 0;
+          if (!isMultiUrl) jobState.current = i;
         }
+      }
+
+      if (bulkOps.length > 0 && !jobState.cancelled) {
+        const result = await db.collection(targetCol).bulkWrite(bulkOps, { ordered: false });
+        recordsUpdated += result.modifiedCount || 0;
+        recordsCreated += (result.upsertedCount || 0) + (result.insertedCount || 0);
       }
 
       urlIndex++;
