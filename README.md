@@ -10,7 +10,7 @@ Check out the live deployment of ThiruXDB here:
 - **Username:** `demo`
 - **Password:** `demo@123`
 
-![ThiruXDB Featured Image](public/demo.webp)
+![ThiruXDB Featured Image](public/featured-image.png)
 
 ---
 
