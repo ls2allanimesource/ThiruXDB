@@ -367,11 +367,12 @@ export function UsersPage() {
       {ipModal.isOpen && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
           <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl w-full max-w-md overflow-hidden shadow-2xl">
-            <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
-                <Globe className="w-5 h-5 text-gray-400" /> IP Lookup: {ipModal.ip}
+            <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700 gap-4">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2 min-w-0">
+                <Globe className="w-5 h-5 text-gray-400 shrink-0" /> 
+                <span className="truncate">IP Lookup: {ipModal.ip}</span>
               </h3>
-              <button onClick={() => setIpModal(prev => ({ ...prev, isOpen: false }))} className="text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:text-white transition"><X className="w-5 h-5" /></button>
+              <button onClick={() => setIpModal(prev => ({ ...prev, isOpen: false }))} className="text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:text-white transition shrink-0"><X className="w-5 h-5" /></button>
             </div>
             <div className="p-6">
               {ipModal.loading ? (
@@ -397,9 +398,10 @@ export function UsersPage() {
                         {ipModal.copied ? <CheckCircle2 className="w-4 h-4 text-green-500" /> : <Copy className="w-4 h-4" />}
                       </button>
                     </div>
-                    <pre className="bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg p-4 text-xs font-mono text-gray-700 dark:text-gray-300 overflow-x-auto">
-                      {JSON.stringify(ipModal.data, null, 2)}
-                    </pre>
+                    <pre 
+                      className="bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg p-4 text-xs font-mono text-gray-700 dark:text-gray-300 overflow-x-auto"
+                      dangerouslySetInnerHTML={{ __html: syntaxHighlight(JSON.stringify(ipModal.data, null, 2)) }}
+                    />
                   </div>
                 </div>
               ) : null}
