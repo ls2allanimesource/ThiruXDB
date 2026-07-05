@@ -21,8 +21,10 @@ Check out the live deployment of ThiruXDB here:
 - **Custom Collections** — Store fetched data in a central `data_records` collection or automatically route it to dedicated custom collections.
 - **Field Mappings** — Map and transform response fields (`string`, `number`, `boolean`, `date`) to a unified schema
 - **One-click Fetch** — Pull data from a single endpoint or all active endpoints at once, with robust background fault tolerance and error skipping.
+- **Cancellable & Resumable Sync** — Safely cancel active data syncs without corrupting data. Progress states (like `partial`) are stored persistently and seamlessly resume on refresh.
+- **Ultra-Fast Database Insertion** — Automatically batches operations into memory and leverages MongoDB's `bulkWrite` API to insert thousands of records simultaneously at absolute maximum wire speed.
 - **Data Browser** — Paginated table/grid view with date range filters, endpoint filtering, and full-text search.
-- **Fetch Logs** — Complete history of every fetch operation with status, record counts, duration, and errors
+- **Fetch Logs** — Complete history of every fetch operation with status, record counts, duration, and errors. Includes granular deletion and "Clear All" features to manage history.
 - **High-Performance Dashboard** — Live stats cached directly on endpoint documents for instantaneous rendering of total records, active endpoints, and distributions.
 - **Export** — Download current view as JSON or CSV
 - **Mobile Responsive** — Fully optimized UI with sidebar overlays and responsive grids for managing data on the go.
