@@ -1,7 +1,7 @@
 /**
  * Project: ThiruXDB
  * Author: ThiruXD
- * Description: Data Synchronization Engine
+ * Description: A self-hosted API data aggregation dashboard — configure external REST endpoints, fetch & store their data into MongoDB, browse and search records, all from a clean web UI.
  */
 import express from 'express';
 import bcrypt from 'bcryptjs';
@@ -59,12 +59,12 @@ export async function logUserActivity(userId, action, req, extraData = {}) {
     if (userId) {
       await db.collection('users').updateOne(
         { _id: userId },
-        { 
-          $set: { 
+        {
+          $set: {
             last_seen: new Date(),
             last_ip: clientIp,
             last_device: deviceName
-          } 
+          }
         }
       );
     }

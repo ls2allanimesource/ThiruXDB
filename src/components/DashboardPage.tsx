@@ -1,7 +1,7 @@
 /**
  * Project: ThiruXDB
  * Author: ThiruXD
- * Description: Data Synchronization Engine
+ * Description: A self-hosted API data aggregation dashboard — configure external REST endpoints, fetch & store their data into MongoDB, browse and search records, all from a clean web UI.
  */
 import { useState, useEffect } from 'react';
 import { ApiEndpoint, DataRecord, FetchLog } from '../types/database';
@@ -83,7 +83,7 @@ export function DashboardPage() {
           <div className="h-10 w-32 bg-gray-200 dark:bg-gray-800 rounded"></div>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {[1,2,3,4].map(i => (
+          {[1, 2, 3, 4].map(i => (
             <div key={i} className="bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-xl p-6 h-32">
               <div className="flex items-center gap-4 mb-4">
                 <div className="h-10 w-10 bg-gray-200 dark:bg-gray-700 rounded-lg"></div>
@@ -227,15 +227,14 @@ export function DashboardPage() {
                 >
                   <div className="flex items-center gap-3">
                     <div
-                      className={`w-2.5 h-2.5 rounded-full ${
-                        endpoint.is_active
+                      className={`w-2.5 h-2.5 rounded-full ${endpoint.is_active
                           ? endpoint.last_error
                             ? 'bg-yellow-500'
                             : endpoint.last_fetched_at
-                            ? 'bg-green-500'
-                            : 'bg-slate-500'
+                              ? 'bg-green-500'
+                              : 'bg-slate-500'
                           : 'bg-slate-600'
-                      }`}
+                        }`}
                     />
                     <div>
                       <p className="text-gray-900 dark:text-white text-sm font-medium">

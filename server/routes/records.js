@@ -1,7 +1,7 @@
 /**
  * Project: ThiruXDB
  * Author: ThiruXD
- * Description: Data Synchronization Engine
+ * Description: A self-hosted API data aggregation dashboard — configure external REST endpoints, fetch & store their data into MongoDB, browse and search records, all from a clean web UI.
  */
 import { Router } from 'express';
 import { ObjectId } from 'mongodb';
@@ -46,13 +46,13 @@ router.get('/', async (req, res) => {
 
     let targetCols = [];
     if (req.query.collection_name && req.query.collection_name !== 'all') {
-       if (req.query.collection_name === 'uncategorized') {
-         targetCols = ['data_records'];
-       } else {
-         targetCols = [req.query.collection_name];
-       }
+      if (req.query.collection_name === 'uncategorized') {
+        targetCols = ['data_records'];
+      } else {
+        targetCols = [req.query.collection_name];
+      }
     } else {
-       targetCols = await getTargetCollections(db);
+      targetCols = await getTargetCollections(db);
     }
 
     let docs = [];
@@ -70,7 +70,7 @@ router.get('/', async (req, res) => {
       for (let i = 1; i < targetCols.length; i++) {
         unionPipeline.push({ $unionWith: { coll: targetCols[i] } });
       }
-      
+
       const fullPipeline = [
         ...unionPipeline,
         ...(Object.keys(filter).length > 0 ? [{ $match: filter }] : []),
@@ -78,7 +78,7 @@ router.get('/', async (req, res) => {
       ];
 
       const countPipeline = [...fullPipeline, { $count: 'total' }];
-      
+
       const dataPipeline = [
         ...fullPipeline,
         { $skip: skip },
@@ -112,10 +112,10 @@ router.get('/search', async (req, res) => {
 
     let targetCols = [];
     if (req.query.collection_name && req.query.collection_name !== 'all') {
-       if (req.query.collection_name === 'uncategorized') targetCols = ['data_records'];
-       else targetCols = [req.query.collection_name];
+      if (req.query.collection_name === 'uncategorized') targetCols = ['data_records'];
+      else targetCols = [req.query.collection_name];
     } else {
-       targetCols = await getTargetCollections(db);
+      targetCols = await getTargetCollections(db);
     }
 
     const filter = {};
@@ -169,7 +169,7 @@ router.get('/counts', async (req, res) => {
   try {
     const db = getDb();
     const targetCols = await getTargetCollections(db);
-    
+
     if (targetCols.length === 0) return res.json({ total: 0, perEndpoint: {} });
 
     const baseCol = targetCols[0];
@@ -247,7 +247,7 @@ router.put('/:id', async (req, res) => {
     const db = getDb();
     const _id = new ObjectId(req.params.id);
     const targetCols = await getTargetCollections(db);
-    
+
     let result = null;
     for (const col of targetCols) {
       result = await db.collection(col).findOneAndUpdate(
@@ -271,7 +271,7 @@ router.delete('/:id', async (req, res) => {
     const db = getDb();
     const _id = new ObjectId(req.params.id);
     const targetCols = await getTargetCollections(db);
-    
+
     for (const col of targetCols) {
       const deletedDoc = await db.collection(col).findOneAndDelete({ _id });
       if (deletedDoc) {
@@ -285,7 +285,7 @@ router.delete('/:id', async (req, res) => {
         break;
       }
     }
-    
+
     res.json({ success: true });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -298,7 +298,7 @@ router.post('/bulk-delete', async (req, res) => {
     const db = getDb();
     const ids = req.body.ids.map(id => new ObjectId(id));
     const targetCols = await getTargetCollections(db);
-    
+
     let deletedCount = 0;
     for (const col of targetCols) {
       const docsToDelete = await db.collection(col).find({ _id: { $in: ids } }).toArray();
@@ -316,10 +316,10 @@ router.post('/bulk-delete', async (req, res) => {
             }
           }
         }
-        
+
         const resDb = await db.collection(col).deleteMany({ _id: { $in: ids } });
         deletedCount += resDb.deletedCount;
-        
+
         for (const [epIdStr, count] of Object.entries(endpointCounts)) {
           await db.collection('api_endpoints').updateOne({ _id: new ObjectId(epIdStr) }, { $inc: { record_count: -count } });
         }

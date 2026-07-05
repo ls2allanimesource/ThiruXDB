@@ -73,7 +73,7 @@ ThiruXDB/
 
 ## Sync Engine Architecture & Deployment
 
-ThiruXDB uses a highly optimized, state-persistent Data Synchronization Engine designed to handle large payloads (20MB+) while gracefully tolerating Serverless environments.
+ThiruXDB uses a highly optimized, state-persistent A self-hosted API data aggregation dashboard — configure external REST endpoints, fetch & store their data into MongoDB, browse and search records, all from a clean web UI. designed to handle large payloads (20MB+) while gracefully tolerating Serverless environments.
 
 - **MongoDB State Tracking:** Sync progress is stored centrally in the `sync_jobs` collection. This allows multi-container Serverless environments (like Netlify or Vercel) to auto-scale without losing track of your download's progress or speed.
 - **Detached Promise Execution:** By default, the engine spins up the sync as a detached background promise. This operates flawlessly out-of-the-box on any standard **VPS** or persistent Node.js environment.

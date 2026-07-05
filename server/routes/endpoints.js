@@ -1,7 +1,7 @@
 /**
  * Project: ThiruXDB
  * Author: ThiruXD
- * Description: Data Synchronization Engine
+ * Description: A self-hosted API data aggregation dashboard — configure external REST endpoints, fetch & store their data into MongoDB, browse and search records, all from a clean web UI.
  */
 import { runSyncJob } from '../syncEngine.js';
 import { Router } from 'express';
@@ -62,7 +62,7 @@ router.post('/test', async (req, res) => {
   try {
     const { base_url, auth_type, auth_config } = req.body;
     const headers = { 'Content-Type': 'application/json' };
-    
+
     if (auth_type === 'bearer' && auth_config?.token) {
       headers['Authorization'] = `Bearer ${auth_config.token}`;
     } else if (auth_type === 'api_key' && auth_config?.headers) {
@@ -74,18 +74,18 @@ router.post('/test', async (req, res) => {
 
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 10000);
-    
-    const response = await fetch(base_url, { 
-      headers, 
-      signal: controller.signal 
+
+    const response = await fetch(base_url, {
+      headers,
+      signal: controller.signal
     });
-    
+
     clearTimeout(timeoutId);
 
     if (!response.ok) {
       return res.status(400).json({ error: `HTTP ${response.status}: ${response.statusText}` });
     }
-    
+
     const data = await response.json();
     res.json(data);
   } catch (err) {
@@ -246,7 +246,7 @@ router.post('/:id/sync', async (req, res) => {
       // On a VPS, this will run cleanly and uninterrupted in the background.
       runSyncJob(endpointId.toString(), skipOffset).catch(err => console.error('Background job error:', err));
     }
-  } catch(e) {
+  } catch (e) {
     res.status(500).json({ error: e.message });
   }
 });
@@ -258,10 +258,10 @@ router.get('/active-syncs', async (req, res) => {
       status: { $in: ['running', 'downloading'] },
       cancelled: { $ne: true }
     }).toArray();
-    
+
     const activeIds = activeJobs.map(j => j.endpoint_id);
     res.json({ activeIds });
-  } catch(e) {
+  } catch (e) {
     res.status(500).json({ error: e.message });
   }
 });
@@ -272,7 +272,7 @@ router.get('/:id/sync-status', async (req, res) => {
     const job = await db.collection('sync_jobs').findOne({ endpoint_id: req.params.id });
     if (!job) return res.json({ status: 'idle', current: 0, total: 0 });
     res.json(job);
-  } catch(e) {
+  } catch (e) {
     res.status(500).json({ error: e.message });
   }
 });
@@ -290,7 +290,7 @@ router.post('/:id/cancel-sync', async (req, res) => {
     } else {
       res.json({ message: 'No active job to cancel' });
     }
-  } catch(e) {
+  } catch (e) {
     res.status(500).json({ error: e.message });
   }
 });

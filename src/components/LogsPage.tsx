@@ -1,7 +1,7 @@
 /**
  * Project: ThiruXDB
  * Author: ThiruXD
- * Description: Data Synchronization Engine
+ * Description: A self-hosted API data aggregation dashboard — configure external REST endpoints, fetch & store their data into MongoDB, browse and search records, all from a clean web UI.
  */
 import { useState, useEffect } from 'react';
 import { FetchLog, ApiEndpoint } from '../types/database';
@@ -85,80 +85,79 @@ export function LogsPage() {
         <div className="bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full">
-            <thead className="bg-gray-100 dark:bg-gray-700/50">
-              <tr>
-                <th className="text-left px-4 py-3 text-sm font-medium text-gray-500 dark:text-gray-400">
-                  Status
-                </th>
-                <th className="text-left px-4 py-3 text-sm font-medium text-gray-500 dark:text-gray-400">
-                  Endpoint
-                </th>
-                <th className="text-right px-4 py-3 text-sm font-medium text-gray-500 dark:text-gray-400">
-                  Records
-                </th>
-                <th className="text-right px-4 py-3 text-sm font-medium text-gray-500 dark:text-gray-400">
-                  Created
-                </th>
-                <th className="text-right px-4 py-3 text-sm font-medium text-gray-500 dark:text-gray-400">
-                  Updated
-                </th>
-                <th className="text-right px-4 py-3 text-sm font-medium text-gray-500 dark:text-gray-400">
-                  Duration
-                </th>
-                <th className="text-left px-4 py-3 text-sm font-medium text-gray-500 dark:text-gray-400">
-                  Time
-                </th>
-                <th className="text-left px-4 py-3 text-sm font-medium text-gray-500 dark:text-gray-400">
-                  Error
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-200 dark:divide-gray-800">
-              {logs.map((log) => (
-                <tr key={log.id} className="hover:bg-gray-50 dark:bg-gray-700/30">
-                  <td className="px-4 py-3">
-                    <span
-                      className={`inline-flex items-center gap-1 text-sm ${
-                        log.status === 'success'
-                          ? 'text-green-400'
-                          : log.status === 'partial'
-                          ? 'text-yellow-400'
-                          : 'text-red-400'
-                      }`}
-                    >
-                      {log.status === 'success' ? (
-                        <CheckCircle className="w-4 h-4" />
-                      ) : log.status === 'partial' ? (
-                        <AlertCircle className="w-4 h-4" />
-                      ) : (
-                        <XCircle className="w-4 h-4" />
-                      )}
-                      {log.status}
-                    </span>
-                  </td>
-                  <td className="px-4 py-3 text-gray-900 dark:text-white">{log.endpoint_name}</td>
-                  <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-300">
-                    {log.records_fetched}
-                  </td>
-                  <td className="px-4 py-3 text-right text-green-400">
-                    {log.records_created}
-                  </td>
-                  <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-300">
-                    {log.records_updated}
-                  </td>
-                  <td className="px-4 py-3 text-right text-gray-500 dark:text-gray-400">
-                    {log.duration_ms}ms
-                  </td>
-                  <td className="px-4 py-3 text-gray-400 dark:text-gray-500 text-sm whitespace-nowrap">
-                    {new Date(log.created_at).toLocaleString()}
-                  </td>
-                  <td className="px-4 py-3 text-red-400 text-sm max-w-xs truncate">
-                    {log.error_message || '-'}
-                  </td>
+              <thead className="bg-gray-100 dark:bg-gray-700/50">
+                <tr>
+                  <th className="text-left px-4 py-3 text-sm font-medium text-gray-500 dark:text-gray-400">
+                    Status
+                  </th>
+                  <th className="text-left px-4 py-3 text-sm font-medium text-gray-500 dark:text-gray-400">
+                    Endpoint
+                  </th>
+                  <th className="text-right px-4 py-3 text-sm font-medium text-gray-500 dark:text-gray-400">
+                    Records
+                  </th>
+                  <th className="text-right px-4 py-3 text-sm font-medium text-gray-500 dark:text-gray-400">
+                    Created
+                  </th>
+                  <th className="text-right px-4 py-3 text-sm font-medium text-gray-500 dark:text-gray-400">
+                    Updated
+                  </th>
+                  <th className="text-right px-4 py-3 text-sm font-medium text-gray-500 dark:text-gray-400">
+                    Duration
+                  </th>
+                  <th className="text-left px-4 py-3 text-sm font-medium text-gray-500 dark:text-gray-400">
+                    Time
+                  </th>
+                  <th className="text-left px-4 py-3 text-sm font-medium text-gray-500 dark:text-gray-400">
+                    Error
+                  </th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y divide-gray-200 dark:divide-gray-800">
+                {logs.map((log) => (
+                  <tr key={log.id} className="hover:bg-gray-50 dark:bg-gray-700/30">
+                    <td className="px-4 py-3">
+                      <span
+                        className={`inline-flex items-center gap-1 text-sm ${log.status === 'success'
+                            ? 'text-green-400'
+                            : log.status === 'partial'
+                              ? 'text-yellow-400'
+                              : 'text-red-400'
+                          }`}
+                      >
+                        {log.status === 'success' ? (
+                          <CheckCircle className="w-4 h-4" />
+                        ) : log.status === 'partial' ? (
+                          <AlertCircle className="w-4 h-4" />
+                        ) : (
+                          <XCircle className="w-4 h-4" />
+                        )}
+                        {log.status}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3 text-gray-900 dark:text-white">{log.endpoint_name}</td>
+                    <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-300">
+                      {log.records_fetched}
+                    </td>
+                    <td className="px-4 py-3 text-right text-green-400">
+                      {log.records_created}
+                    </td>
+                    <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-300">
+                      {log.records_updated}
+                    </td>
+                    <td className="px-4 py-3 text-right text-gray-500 dark:text-gray-400">
+                      {log.duration_ms}ms
+                    </td>
+                    <td className="px-4 py-3 text-gray-400 dark:text-gray-500 text-sm whitespace-nowrap">
+                      {new Date(log.created_at).toLocaleString()}
+                    </td>
+                    <td className="px-4 py-3 text-red-400 text-sm max-w-xs truncate">
+                      {log.error_message || '-'}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </div>
       )}

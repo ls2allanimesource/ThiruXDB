@@ -1,7 +1,7 @@
 /**
  * Project: ThiruXDB
  * Author: ThiruXD
- * Description: Data Synchronization Engine
+ * Description: A self-hosted API data aggregation dashboard — configure external REST endpoints, fetch & store their data into MongoDB, browse and search records, all from a clean web UI.
  */
 import { useState, useEffect } from 'react';
 import { ApiEndpoint, FetchLog } from '../types/database';
@@ -21,13 +21,13 @@ export function FetchPage() {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [globalSkip, setGlobalSkip] = useState<number>(0);
   const [skipOffsets, setSkipOffsets] = useState<Record<string, number>>({});
-  
+
   const { user } = useAuth();
   const isViewer = user?.role === 'viewer';
-  
+
   const { fetchingIds, fetchProgress, startFetch, cancelFetch, restoreFetches } = useFetchStore();
 
-  useEffect(() => { 
+  useEffect(() => {
     loadData();
     restoreFetches();
   }, []);
@@ -123,24 +123,24 @@ export function FetchPage() {
       </div>
 
       {isLoading ? (
-            <div className="space-y-4">
-              {[1, 2, 3].map(i => (
-                <div key={i} className="bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-lg p-4 flex items-start gap-4 animate-pulse">
-                  <div className="w-5 h-5 rounded bg-gray-200 dark:bg-gray-700 shrink-0 mt-1"></div>
-                  <div className="flex-1 flex flex-col sm:flex-row gap-4 justify-between">
-                    <div className="flex items-center gap-4">
-                      <div className="w-10 h-10 rounded-lg bg-gray-200 dark:bg-gray-700 shrink-0"></div>
-                      <div className="space-y-2">
-                        <div className="h-5 bg-gray-200 dark:bg-gray-700 rounded w-32"></div>
-                        <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-48"></div>
-                      </div>
-                    </div>
-                    <div className="h-10 bg-gray-200 dark:bg-gray-700 rounded w-24"></div>
+        <div className="space-y-4">
+          {[1, 2, 3].map(i => (
+            <div key={i} className="bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-lg p-4 flex items-start gap-4 animate-pulse">
+              <div className="w-5 h-5 rounded bg-gray-200 dark:bg-gray-700 shrink-0 mt-1"></div>
+              <div className="flex-1 flex flex-col sm:flex-row gap-4 justify-between">
+                <div className="flex items-center gap-4">
+                  <div className="w-10 h-10 rounded-lg bg-gray-200 dark:bg-gray-700 shrink-0"></div>
+                  <div className="space-y-2">
+                    <div className="h-5 bg-gray-200 dark:bg-gray-700 rounded w-32"></div>
+                    <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-48"></div>
                   </div>
                 </div>
-              ))}
+                <div className="h-10 bg-gray-200 dark:bg-gray-700 rounded w-24"></div>
+              </div>
             </div>
-          ) : endpoints.length === 0 ? (
+          ))}
+        </div>
+      ) : endpoints.length === 0 ? (
         <div className="bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-lg p-12 text-center">
           <div className="w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4"><Database className="w-8 h-8 text-gray-400 dark:text-gray-500" /></div>
           <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">No active endpoints</h3>
@@ -187,7 +187,7 @@ export function FetchPage() {
                             <p className="text-sm text-gray-400 dark:text-gray-500 font-mono truncate block">{endpoint.base_url}</p>
                           </div>
                         </div>
-                        
+
                         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto shrink-0 border-t border-gray-100 dark:border-gray-700/50 sm:border-0 pt-3 sm:pt-0 mt-2 sm:mt-0">
                           {isFetching && progress && (
                             <div className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300 font-medium justify-between sm:justify-start">
@@ -195,8 +195,8 @@ export function FetchPage() {
                                 {progress.status === 'downloading' ? (
                                   <span className="flex items-center gap-1.5 text-blue-500">
                                     <Loader2 className="w-3.5 h-3.5 animate-spin shrink-0" />
-                                    {progress.download_total ? 
-                                      `${formatBytes(progress.download_loaded || 0)} / ${formatBytes(progress.download_total)}` : 
+                                    {progress.download_total ?
+                                      `${formatBytes(progress.download_loaded || 0)} / ${formatBytes(progress.download_total)}` :
                                       `${formatBytes(progress.download_loaded || 0)}`
                                     }
                                     {progress.download_speed ? <span className="text-xs text-blue-400 ml-1">({formatBytes(progress.download_speed)}/s)</span> : null}
@@ -210,18 +210,18 @@ export function FetchPage() {
                                 )}
                               </span>
                               <div className="w-24 h-1.5 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden shrink-0">
-                                <div className={`h-full bg-blue-500 transition-all duration-300 ${progress.status === 'downloading' && !progress.download_total ? 'animate-pulse w-full' : ''}`} 
-                                  style={progress.status === 'downloading' && !progress.download_total ? undefined : { 
-                                    width: `${progress.status === 'downloading' && progress.download_total ? 
-                                      Math.min(100, ((progress.download_loaded || 0) / progress.download_total) * 100) : 
-                                      Math.min(100, (progress.current / (progress.total || 1)) * 100)}%` 
-                                  }} 
+                                <div className={`h-full bg-blue-500 transition-all duration-300 ${progress.status === 'downloading' && !progress.download_total ? 'animate-pulse w-full' : ''}`}
+                                  style={progress.status === 'downloading' && !progress.download_total ? undefined : {
+                                    width: `${progress.status === 'downloading' && progress.download_total ?
+                                      Math.min(100, ((progress.download_loaded || 0) / progress.download_total) * 100) :
+                                      Math.min(100, (progress.current / (progress.total || 1)) * 100)}%`
+                                  }}
                                 />
                               </div>
                             </div>
                           )}
                           {!isFetching && endpoint.last_fetched_at && <span className="text-sm text-gray-400 dark:text-gray-500 flex items-center justify-between sm:justify-start gap-1"><span>Last Fetched:</span> <span className="flex items-center gap-1"><Clock className="w-4 h-4" />{new Date(endpoint.last_fetched_at).toLocaleString()}</span></span>}
-                          
+
                           {!isViewer && !isFetching && (
                             <div className="flex items-center justify-between sm:justify-start gap-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg px-2 py-1">
                               <span className="text-xs text-gray-500 dark:text-gray-400">Skip</span>
@@ -242,7 +242,7 @@ export function FetchPage() {
                           ))}
                         </div>
                       </div>
-                      
+
                       {endpoint.last_error && (
                         <div className="mt-3 flex items-center gap-2 text-sm text-red-400 bg-red-500/10 rounded-lg px-3 py-2">
                           <AlertCircle className="w-4 h-4 shrink-0" />
@@ -252,9 +252,9 @@ export function FetchPage() {
                     </div>
                   </div>
                 </div>
-            );
-          })}
-        </div>
+              );
+            })}
+          </div>
         </>
       )}
 
@@ -262,28 +262,28 @@ export function FetchPage() {
         <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Recent Fetch History</h2>
         <div className="bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
           <div className="overflow-x-auto">
-          {recentLogs.length === 0 ? <p className="text-gray-400 dark:text-gray-500 text-center py-8">No fetch history yet</p> : (
-            <table className="w-full">
-              <thead className="bg-gray-100 dark:bg-gray-700/50">
-                <tr>
-                  {['Endpoint','Status','Fetched','Created','Updated','Duration','Time'].map(h => <th key={h} className={`px-4 py-3 text-sm font-medium text-gray-500 dark:text-gray-400 ${h==='Endpoint'||h==='Status'||h==='Time' ? 'text-left' : 'text-right'}`}>{h}</th>)}
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-200 dark:divide-gray-800">
-                {recentLogs.map((log) => (
-                  <tr key={log.id} className="hover:bg-gray-50 dark:bg-gray-700/30">
-                    <td className="px-4 py-3 text-gray-900 dark:text-white">{log.endpoint_name}</td>
-                    <td className="px-4 py-3"><span className={`inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-md ${log.status==='success'?'bg-green-50 text-green-700 dark:bg-green-500/10 dark:text-green-400':log.status==='partial'?'bg-yellow-50 text-yellow-700 dark:bg-yellow-500/10 dark:text-yellow-400':'bg-red-50 text-red-700 dark:bg-red-500/10 dark:text-red-400'}`}>{log.status==='success'?<CheckCircle className="w-3.5 h-3.5"/>:log.status==='partial'?<AlertCircle className="w-3.5 h-3.5"/>:<XCircle className="w-3.5 h-3.5"/>}{log.status}</span></td>
-                    <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-300">{log.records_fetched}</td>
-                    <td className="px-4 py-3 text-right text-green-400">{log.records_created}</td>
-                    <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-300">{log.records_updated}</td>
-                    <td className="px-4 py-3 text-right text-gray-500 dark:text-gray-400">{log.duration_ms}ms</td>
-                    <td className="px-4 py-3 text-gray-400 dark:text-gray-500 text-sm">{new Date(log.created_at).toLocaleString()}</td>
+            {recentLogs.length === 0 ? <p className="text-gray-400 dark:text-gray-500 text-center py-8">No fetch history yet</p> : (
+              <table className="w-full">
+                <thead className="bg-gray-100 dark:bg-gray-700/50">
+                  <tr>
+                    {['Endpoint', 'Status', 'Fetched', 'Created', 'Updated', 'Duration', 'Time'].map(h => <th key={h} className={`px-4 py-3 text-sm font-medium text-gray-500 dark:text-gray-400 ${h === 'Endpoint' || h === 'Status' || h === 'Time' ? 'text-left' : 'text-right'}`}>{h}</th>)}
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          )}
+                </thead>
+                <tbody className="divide-y divide-gray-200 dark:divide-gray-800">
+                  {recentLogs.map((log) => (
+                    <tr key={log.id} className="hover:bg-gray-50 dark:bg-gray-700/30">
+                      <td className="px-4 py-3 text-gray-900 dark:text-white">{log.endpoint_name}</td>
+                      <td className="px-4 py-3"><span className={`inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-md ${log.status === 'success' ? 'bg-green-50 text-green-700 dark:bg-green-500/10 dark:text-green-400' : log.status === 'partial' ? 'bg-yellow-50 text-yellow-700 dark:bg-yellow-500/10 dark:text-yellow-400' : 'bg-red-50 text-red-700 dark:bg-red-500/10 dark:text-red-400'}`}>{log.status === 'success' ? <CheckCircle className="w-3.5 h-3.5" /> : log.status === 'partial' ? <AlertCircle className="w-3.5 h-3.5" /> : <XCircle className="w-3.5 h-3.5" />}{log.status}</span></td>
+                      <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-300">{log.records_fetched}</td>
+                      <td className="px-4 py-3 text-right text-green-400">{log.records_created}</td>
+                      <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-300">{log.records_updated}</td>
+                      <td className="px-4 py-3 text-right text-gray-500 dark:text-gray-400">{log.duration_ms}ms</td>
+                      <td className="px-4 py-3 text-gray-400 dark:text-gray-500 text-sm">{new Date(log.created_at).toLocaleString()}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
           </div>
         </div>
       </div>

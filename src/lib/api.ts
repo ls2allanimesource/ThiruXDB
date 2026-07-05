@@ -1,7 +1,7 @@
 /**
  * Project: ThiruXDB
  * Author: ThiruXD
- * Description: Data Synchronization Engine
+ * Description: A self-hosted API data aggregation dashboard — configure external REST endpoints, fetch & store their data into MongoDB, browse and search records, all from a clean web UI.
  */
 /**
  * Typed API client — replaces @supabase/supabase-js.
@@ -25,7 +25,7 @@ async function request<T>(
   options?: RequestInit
 ): Promise<T> {
   const headers: Record<string, string> = { 'Content-Type': 'application/json' };
-  
+
   // Attach token if logged in
   const token = localStorage.getItem('thiruxdb_jwt');
   if (token) {

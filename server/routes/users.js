@@ -1,7 +1,7 @@
 /**
  * Project: ThiruXDB
  * Author: ThiruXD
- * Description: Data Synchronization Engine
+ * Description: A self-hosted API data aggregation dashboard — configure external REST endpoints, fetch & store their data into MongoDB, browse and search records, all from a clean web UI.
  */
 import express from 'express';
 import bcrypt from 'bcryptjs';
@@ -32,7 +32,7 @@ router.post('/', async (req, res) => {
   try {
     const db = getDb();
     const { username, password, role } = req.body;
-    
+
     if (!username || !password || !role) {
       return res.status(400).json({ error: 'Missing required fields' });
     }
@@ -85,9 +85,9 @@ router.put('/:id', async (req, res) => {
       update,
       { returnDocument: 'after' }
     );
-    
+
     if (!result) return res.status(404).json({ error: 'User not found' });
-    
+
     const { password_hash, ...safeUser } = result;
     res.json({ ...safeUser, id: safeUser._id.toString(), _id: undefined });
   } catch (err) {
@@ -100,7 +100,7 @@ router.delete('/:id', async (req, res) => {
   try {
     const db = getDb();
     const _id = new ObjectId(req.params.id);
-    
+
     const user = await db.collection('users').findOne({ _id });
     if (user && user.role === 'admin') {
       const adminCount = await db.collection('users').countDocuments({ role: 'admin' });
@@ -128,7 +128,7 @@ router.get('/activity', async (req, res) => {
     if (req.query.user_id) {
       pipeline.push({ $match: { user_id: new ObjectId(req.query.user_id) } });
     }
-    
+
     pipeline.push(
       { $sort: { created_at: -1 } },
       { $skip: skip },

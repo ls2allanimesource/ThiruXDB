@@ -1,7 +1,7 @@
 /**
  * Project: ThiruXDB
  * Author: ThiruXD
- * Description: Data Synchronization Engine
+ * Description: A self-hosted API data aggregation dashboard — configure external REST endpoints, fetch & store their data into MongoDB, browse and search records, all from a clean web UI.
  */
 import { useState, useEffect } from 'react';
 import { ApiEndpoint, EndpointFormData, FieldMapping } from '../types/database';
@@ -218,7 +218,7 @@ export function EndpointForm({ endpoint, onSave, onCancel }: EndpointFormProps) 
             <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 mt-6 mb-6">
               <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-4">Dynamic Path Variables</h3>
               <p className="text-xs text-gray-500 dark:text-gray-400 mb-4">Replace parts of the URL dynamically (e.g. {`{studentID}`}) using data from another collection.</p>
-              
+
               <div className="space-y-4">
                 {formData.path_variables.map((pv, idx) => (
                   <div key={idx} className="flex items-center gap-3 bg-gray-100 dark:bg-gray-700/50 p-3 rounded-lg border border-gray-300 dark:border-gray-600">

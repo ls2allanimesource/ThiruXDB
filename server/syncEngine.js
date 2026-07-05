@@ -1,7 +1,7 @@
 /**
  * Project: ThiruXDB
  * Author: ThiruXD
- * Description: Data Synchronization Engine
+ * Description: A self-hosted API data aggregation dashboard — configure external REST endpoints, fetch & store their data into MongoDB, browse and search records, all from a clean web UI.
  */
 import { ObjectId } from 'mongodb';
 import { getDb } from './db.js';
@@ -9,7 +9,7 @@ import { getDb } from './db.js';
 export async function runSyncJob(endpointIdStr, skipOffset) {
   const db = getDb();
   const endpointId = new ObjectId(endpointIdStr);
-  
+
   let jobState = {
     status: 'running',
     current: 0,
@@ -36,13 +36,13 @@ export async function runSyncJob(endpointIdStr, skipOffset) {
         error: jobState.error,
         updated_at: new Date()
       };
-      
+
       const result = await db.collection('sync_jobs').findOneAndUpdate(
         { endpoint_id: endpointIdStr },
         { $set: updatePayload },
         { returnDocument: 'after' }
       );
-      
+
       if (result && result.cancelled) {
         jobState.cancelled = true;
       }
@@ -119,12 +119,12 @@ export async function runSyncJob(endpointIdStr, skipOffset) {
 
         const response = await fetch(url, { headers });
         if (!response.ok) {
-           console.error(`Failed to fetch ${url}: HTTP ${response.status}`);
-           urlIndex++;
-           if (isMultiUrl) jobState.current = urlIndex;
-           jobState.status = 'running';
-           await flushState(true);
-           continue; 
+          console.error(`Failed to fetch ${url}: HTTP ${response.status}`);
+          urlIndex++;
+          if (isMultiUrl) jobState.current = urlIndex;
+          jobState.status = 'running';
+          await flushState(true);
+          continue;
         }
 
         const contentLength = response.headers.get('content-length');
@@ -146,7 +146,7 @@ export async function runSyncJob(endpointIdStr, skipOffset) {
           chunks.push(value);
           loaded += value.length;
           jobState.download_loaded = loaded;
-          
+
           const nowTime = Date.now();
           if (nowTime - lastSpeedTime > 500) {
             const timeDiff = (nowTime - lastSpeedTime) / 1000;
@@ -173,13 +173,13 @@ export async function runSyncJob(endpointIdStr, skipOffset) {
           for (const path of endpoint.response_path.split('.')) data = data?.[path];
         }
         items = Array.isArray(data) ? data : [data].filter(Boolean);
-        
+
         if (!isMultiUrl && skipOffset > 0) {
-           items = items.slice(skipOffset);
+          items = items.slice(skipOffset);
         }
         if (!isMultiUrl) {
-           jobState.total = items.length;
-           await flushState(true);
+          jobState.total = items.length;
+          await flushState(true);
         }
       } catch (err) {
         console.error(`Error fetching ${url}: ${err.message}`);
@@ -315,10 +315,10 @@ export async function runSyncJob(endpointIdStr, skipOffset) {
   } catch (e) {
     console.error('Failed to update endpoint status', e.message);
   }
-  
+
   setTimeout(async () => {
     try {
       await db.collection('sync_jobs').deleteOne({ endpoint_id: endpointIdStr });
-    } catch(e) {}
+    } catch (e) { }
   }, 10000);
 }

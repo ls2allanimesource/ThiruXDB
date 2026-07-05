@@ -1,7 +1,7 @@
 /**
  * Project: ThiruXDB
  * Author: ThiruXD
- * Description: Data Synchronization Engine
+ * Description: A self-hosted API data aggregation dashboard — configure external REST endpoints, fetch & store their data into MongoDB, browse and search records, all from a clean web UI.
  */
 import { ReactNode, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
@@ -158,7 +158,7 @@ export function Layout({ children, currentPage, onNavigate }: LayoutProps) {
           {/* Copyright Strip */}
           <div className="p-4 border-t border-gray-200 dark:border-gray-800 text-center">
             <p className="text-xs text-gray-500 dark:text-gray-400 flex items-center justify-center gap-1">
-              &copy; {new Date().getFullYear()} 
+              &copy; {new Date().getFullYear()}
               <a href="https://github.com/ThiruXD/ThiruXDB" target="_blank" rel="noopener noreferrer" className="font-medium hover:text-gray-900 dark:hover:text-white transition flex items-center gap-1 ml-1">
                 <Github className="w-3.5 h-3.5" /> By ThiruXD
               </a>
@@ -170,11 +170,11 @@ export function Layout({ children, currentPage, onNavigate }: LayoutProps) {
       {/* Main content */}
       <main className="lg:ml-64 min-h-screen pt-16 lg:pt-0 flex flex-col">
         <div className="p-4 lg:p-8 flex-1">{children}</div>
-        
+
         {/* Mobile Copyright Strip */}
         <div className="lg:hidden p-4 border-t border-gray-200 dark:border-gray-800 text-center mt-auto">
           <p className="text-xs text-gray-500 dark:text-gray-400 flex items-center justify-center gap-1">
-            &copy; {new Date().getFullYear()} 
+            &copy; {new Date().getFullYear()}
             <a href="https://github.com/ThiruXD/ThiruXDB" target="_blank" rel="noopener noreferrer" className="font-medium hover:text-gray-900 dark:hover:text-white transition flex items-center gap-1 ml-1">
               <Github className="w-3.5 h-3.5" /> By ThiruXD
             </a>

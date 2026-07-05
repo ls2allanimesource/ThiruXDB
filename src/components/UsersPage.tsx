@@ -1,7 +1,7 @@
 /**
  * Project: ThiruXDB
  * Author: ThiruXD
- * Description: Data Synchronization Engine
+ * Description: A self-hosted API data aggregation dashboard — configure external REST endpoints, fetch & store their data into MongoDB, browse and search records, all from a clean web UI.
  */
 import { useState, useEffect } from 'react';
 import { api } from '../lib/api';
@@ -30,14 +30,14 @@ import { syntaxHighlight } from '../lib/utils';
 export function UsersPage() {
   const { user } = useAuth();
   const [activeTab, setActiveTab] = useState<'users' | 'activity'>('users');
-  
+
   // Users State
   const [users, setUsers] = useState<User[]>([]);
   const [isLoadingUsers, setIsLoadingUsers] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [editingUser, setEditingUser] = useState<User | null>(null);
   const [viewingLogsForUser, setViewingLogsForUser] = useState<User | null>(null);
-  
+
   // Activity Logs State
   const [logs, setLogs] = useState<ActivityLog[]>([]);
   const [isLoadingLogs, setIsLoadingLogs] = useState(false);
@@ -171,17 +171,15 @@ export function UsersPage() {
       <div className="flex gap-4 border-b border-gray-200 dark:border-gray-700 pb-px">
         <button
           onClick={() => setActiveTab('users')}
-          className={`flex items-center gap-2 px-4 py-2 border-b-2 font-medium transition ${
-            activeTab === 'users' ? 'border-gray-900 dark:border-white text-gray-900 dark:text-white' : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:text-gray-300'
-          }`}
+          className={`flex items-center gap-2 px-4 py-2 border-b-2 font-medium transition ${activeTab === 'users' ? 'border-gray-900 dark:border-white text-gray-900 dark:text-white' : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:text-gray-300'
+            }`}
         >
           <Users className="w-4 h-4" /> Users
         </button>
         <button
           onClick={() => setActiveTab('activity')}
-          className={`flex items-center gap-2 px-4 py-2 border-b-2 font-medium transition ${
-            activeTab === 'activity' ? 'border-gray-900 dark:border-white text-gray-900 dark:text-white' : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:text-gray-300'
-          }`}
+          className={`flex items-center gap-2 px-4 py-2 border-b-2 font-medium transition ${activeTab === 'activity' ? 'border-gray-900 dark:border-white text-gray-900 dark:text-white' : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:text-gray-300'
+            }`}
         >
           <Activity className="w-4 h-4" /> Activity Logs
         </button>
@@ -190,19 +188,19 @@ export function UsersPage() {
       {/* Users Tab */}
       {activeTab === 'users' && (
         <div className="space-y-4 pt-4">          <div className="bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
-            {isLoadingUsers ? (
-              <div className="animate-pulse">
-                <div className="h-12 bg-gray-100 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700"></div>
-                {[1,2,3,4,5].map(i => (
-                  <div key={i} className="flex border-b border-gray-200 dark:border-gray-800 p-4 gap-4">
-                    <div className="h-4 w-32 bg-gray-200 dark:bg-gray-700 rounded"></div>
-                    <div className="h-4 w-16 bg-gray-200 dark:bg-gray-700 rounded"></div>
-                    <div className="h-4 w-20 bg-gray-200 dark:bg-gray-700 rounded"></div>
-                    <div className="h-4 w-24 bg-gray-200 dark:bg-gray-700 rounded ml-auto"></div>
-                  </div>
-                ))}
-              </div>
-            ) : (
+          {isLoadingUsers ? (
+            <div className="animate-pulse">
+              <div className="h-12 bg-gray-100 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700"></div>
+              {[1, 2, 3, 4, 5].map(i => (
+                <div key={i} className="flex border-b border-gray-200 dark:border-gray-800 p-4 gap-4">
+                  <div className="h-4 w-32 bg-gray-200 dark:bg-gray-700 rounded"></div>
+                  <div className="h-4 w-16 bg-gray-200 dark:bg-gray-700 rounded"></div>
+                  <div className="h-4 w-20 bg-gray-200 dark:bg-gray-700 rounded"></div>
+                  <div className="h-4 w-24 bg-gray-200 dark:bg-gray-700 rounded ml-auto"></div>
+                </div>
+              ))}
+            </div>
+          ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-left text-sm text-gray-700 dark:text-gray-300">
                 <thead className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-400">
@@ -219,11 +217,10 @@ export function UsersPage() {
                     <tr key={u.id} className="hover:bg-gray-50 dark:bg-gray-700/20 transition">
                       <td className="px-6 py-4 font-medium text-gray-900 dark:text-white">{u.username}</td>
                       <td className="px-6 py-4">
-                        <span className={`px-2 py-1 rounded-md text-xs font-medium uppercase ${
-                          u.role === 'admin' ? 'bg-purple-500/10 text-purple-400' :
-                          u.role === 'editor' ? 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300' :
-                          'bg-slate-500/10 text-gray-500 dark:text-gray-400'
-                        }`}>
+                        <span className={`px-2 py-1 rounded-md text-xs font-medium uppercase ${u.role === 'admin' ? 'bg-purple-500/10 text-purple-400' :
+                            u.role === 'editor' ? 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300' :
+                              'bg-slate-500/10 text-gray-500 dark:text-gray-400'
+                          }`}>
                           {u.role}
                         </span>
                       </td>
@@ -234,10 +231,10 @@ export function UsersPage() {
                         {u.last_seen ? new Date(u.last_seen).toLocaleString() : 'Never'}
                       </td>
                       <td className="px-6 py-4 text-right whitespace-nowrap">
-                        <button onClick={() => setViewingLogsForUser(u)} className="p-2 text-gray-500 dark:text-gray-400 hover:text-green-400 transition" title="View Logs"><Activity className="w-4 h-4"/></button>
-                        <button onClick={() => openForm(u)} className="p-2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:text-gray-300 transition" title="Edit"><Edit className="w-4 h-4"/></button>
+                        <button onClick={() => setViewingLogsForUser(u)} className="p-2 text-gray-500 dark:text-gray-400 hover:text-green-400 transition" title="View Logs"><Activity className="w-4 h-4" /></button>
+                        <button onClick={() => openForm(u)} className="p-2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:text-gray-300 transition" title="Edit"><Edit className="w-4 h-4" /></button>
                         {u.id !== user?.id && (
-                          <button onClick={() => handleDelete(u.id)} className="p-2 text-gray-500 dark:text-gray-400 hover:text-red-400 transition" title="Delete"><Trash2 className="w-4 h-4"/></button>
+                          <button onClick={() => handleDelete(u.id)} className="p-2 text-gray-500 dark:text-gray-400 hover:text-red-400 transition" title="Delete"><Trash2 className="w-4 h-4" /></button>
                         )}
                       </td>
                     </tr>
@@ -245,8 +242,8 @@ export function UsersPage() {
                 </tbody>
               </table>
             </div>
-            )}
-          </div>
+          )}
+        </div>
         </div>
       )}
 
@@ -256,7 +253,7 @@ export function UsersPage() {
           {isLoadingLogs ? (
             <div className="animate-pulse">
               <div className="h-12 bg-gray-100 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700"></div>
-              {[1,2,3,4,5].map(i => (
+              {[1, 2, 3, 4, 5].map(i => (
                 <div key={i} className="flex border-b border-gray-200 dark:border-gray-800 p-4 gap-4">
                   <div className="h-4 w-24 bg-gray-200 dark:bg-gray-700 rounded"></div>
                   <div className="h-4 w-32 bg-gray-200 dark:bg-gray-700 rounded"></div>
@@ -266,59 +263,59 @@ export function UsersPage() {
               ))}
             </div>
           ) : (
-          <>
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-sm text-gray-700 dark:text-gray-300">
-                <thead className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-400">
-                  <tr>
-                    <th className="px-6 py-4 font-medium">Time</th>
-                    <th className="px-6 py-4 font-medium">User</th>
-                    <th className="px-6 py-4 font-medium">Action</th>
-                    <th className="px-6 py-4 font-medium">IP Address</th>
-                    <th className="px-6 py-4 font-medium">Device Info</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-200 dark:divide-gray-700/50">
-                  {logs.map(log => (
-                    <tr key={log.id} className="hover:bg-gray-50 dark:bg-gray-700/20 transition">
-                      <td className="px-6 py-4 whitespace-nowrap"><Clock className="w-3 h-3 inline mr-1 text-gray-400 dark:text-gray-500"/>{new Date(log.created_at).toLocaleString()}</td>
-                      <td className="px-6 py-4 font-medium text-gray-900 dark:text-white">{log.username}</td>
-                      <td className="px-6 py-4 text-gray-700 dark:text-gray-300">{log.action}</td>
-                      <td className="px-6 py-4 font-mono text-xs">
-                        <div className="flex items-center gap-1 text-gray-700 dark:text-gray-300">
-                        <Globe className="w-3 h-3 text-gray-400 dark:text-gray-500" /> {log.ip_address}
-                        <button onClick={() => handleIpLookup(log.ip_address)} className="ml-1 text-gray-400 hover:text-gray-900 dark:hover:text-white transition" title="Lookup IP">
-                          <Search className="w-3 h-3" />
-                        </button>
-                      </div>
-                        {log.location_data && (
-                          <div className="flex items-center gap-1 text-gray-500 dark:text-gray-400 mt-1">
-                            <MapPin className="w-3 h-3" /> {log.location_data.city}, {log.location_data.country}
-                          </div>
-                        )}
-                      </td>
-                      <td className="px-6 py-4 text-xs text-gray-500 dark:text-gray-400">
-                        <div className="flex items-center gap-1 text-gray-700 dark:text-gray-300">
-                          <Laptop className="w-3 h-3 text-gray-400 dark:text-gray-500"/> {log.device_info}
-                        </div>
-                        {log.location_data?.isp && (
-                          <div className="text-gray-400 dark:text-gray-500 mt-1 pl-4">ISP: {log.location_data.isp}</div>
-                        )}
-                      </td>
+            <>
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-sm text-gray-700 dark:text-gray-300">
+                  <thead className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-400">
+                    <tr>
+                      <th className="px-6 py-4 font-medium">Time</th>
+                      <th className="px-6 py-4 font-medium">User</th>
+                      <th className="px-6 py-4 font-medium">Action</th>
+                      <th className="px-6 py-4 font-medium">IP Address</th>
+                      <th className="px-6 py-4 font-medium">Device Info</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-            {/* Pagination */}
-            <div className="p-4 border-t border-gray-200 dark:border-gray-700 flex justify-between items-center">
-              <span className="text-sm text-gray-500 dark:text-gray-400">Page {page} of {totalPages}</span>
-              <div className="flex gap-2">
-                <button disabled={page === 1} onClick={() => setPage(p => p - 1)} className="px-3 py-1 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white rounded disabled:opacity-50">Prev</button>
-                <button disabled={page === totalPages} onClick={() => setPage(p => p + 1)} className="px-3 py-1 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white rounded disabled:opacity-50">Next</button>
+                  </thead>
+                  <tbody className="divide-y divide-gray-200 dark:divide-gray-700/50">
+                    {logs.map(log => (
+                      <tr key={log.id} className="hover:bg-gray-50 dark:bg-gray-700/20 transition">
+                        <td className="px-6 py-4 whitespace-nowrap"><Clock className="w-3 h-3 inline mr-1 text-gray-400 dark:text-gray-500" />{new Date(log.created_at).toLocaleString()}</td>
+                        <td className="px-6 py-4 font-medium text-gray-900 dark:text-white">{log.username}</td>
+                        <td className="px-6 py-4 text-gray-700 dark:text-gray-300">{log.action}</td>
+                        <td className="px-6 py-4 font-mono text-xs">
+                          <div className="flex items-center gap-1 text-gray-700 dark:text-gray-300">
+                            <Globe className="w-3 h-3 text-gray-400 dark:text-gray-500" /> {log.ip_address}
+                            <button onClick={() => handleIpLookup(log.ip_address)} className="ml-1 text-gray-400 hover:text-gray-900 dark:hover:text-white transition" title="Lookup IP">
+                              <Search className="w-3 h-3" />
+                            </button>
+                          </div>
+                          {log.location_data && (
+                            <div className="flex items-center gap-1 text-gray-500 dark:text-gray-400 mt-1">
+                              <MapPin className="w-3 h-3" /> {log.location_data.city}, {log.location_data.country}
+                            </div>
+                          )}
+                        </td>
+                        <td className="px-6 py-4 text-xs text-gray-500 dark:text-gray-400">
+                          <div className="flex items-center gap-1 text-gray-700 dark:text-gray-300">
+                            <Laptop className="w-3 h-3 text-gray-400 dark:text-gray-500" /> {log.device_info}
+                          </div>
+                          {log.location_data?.isp && (
+                            <div className="text-gray-400 dark:text-gray-500 mt-1 pl-4">ISP: {log.location_data.isp}</div>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
-            </div>
-          </>
+              {/* Pagination */}
+              <div className="p-4 border-t border-gray-200 dark:border-gray-700 flex justify-between items-center">
+                <span className="text-sm text-gray-500 dark:text-gray-400">Page {page} of {totalPages}</span>
+                <div className="flex gap-2">
+                  <button disabled={page === 1} onClick={() => setPage(p => p - 1)} className="px-3 py-1 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white rounded disabled:opacity-50">Prev</button>
+                  <button disabled={page === totalPages} onClick={() => setPage(p => p + 1)} className="px-3 py-1 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white rounded disabled:opacity-50">Next</button>
+                </div>
+              </div>
+            </>
           )}
         </div>
       )}
@@ -334,15 +331,15 @@ export function UsersPage() {
             <form onSubmit={handleSave} className="p-6 space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Username</label>
-                <input required type="text" value={formData.username} onChange={e => setFormData({...formData, username: e.target.value})} disabled={!!editingUser} className="w-full bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg px-4 py-2 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-gray-900 dark:focus:ring-gray-100 disabled:opacity-50" />
+                <input required type="text" value={formData.username} onChange={e => setFormData({ ...formData, username: e.target.value })} disabled={!!editingUser} className="w-full bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg px-4 py-2 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-gray-900 dark:focus:ring-gray-100 disabled:opacity-50" />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{editingUser ? 'New Password (leave blank to keep)' : 'Password'}</label>
-                <input required={!editingUser} type="password" value={formData.password} onChange={e => setFormData({...formData, password: e.target.value})} className="w-full bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg px-4 py-2 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-gray-900 dark:focus:ring-gray-100" />
+                <input required={!editingUser} type="password" value={formData.password} onChange={e => setFormData({ ...formData, password: e.target.value })} className="w-full bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg px-4 py-2 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-gray-900 dark:focus:ring-gray-100" />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Role</label>
-                <select value={formData.role} onChange={e => setFormData({...formData, role: e.target.value as UserRole})} className="w-full bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg px-4 py-2 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-gray-900 dark:focus:ring-gray-100">
+                <select value={formData.role} onChange={e => setFormData({ ...formData, role: e.target.value as UserRole })} className="w-full bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg px-4 py-2 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-gray-900 dark:focus:ring-gray-100">
                   <option value="admin">Admin (Full Access)</option>
                   <option value="editor">Editor (Can't manage users)</option>
                   <option value="viewer">Viewer (Read Only)</option>
@@ -350,14 +347,14 @@ export function UsersPage() {
               </div>
               {editingUser && editingUser.id !== user?.id && (
                 <div className="flex items-center gap-2 pt-2">
-                  <input type="checkbox" id="active" checked={formData.is_active} onChange={e => setFormData({...formData, is_active: e.target.checked})} className="w-4 h-4 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-0 focus:ring-offset-0 cursor-pointer transition shadow-sm" />
+                  <input type="checkbox" id="active" checked={formData.is_active} onChange={e => setFormData({ ...formData, is_active: e.target.checked })} className="w-4 h-4 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-0 focus:ring-offset-0 cursor-pointer transition shadow-sm" />
                   <label htmlFor="active" className="text-sm text-gray-700 dark:text-gray-300">Account Active</label>
                 </div>
               )}
               <div className="pt-4 flex gap-3">
                 <button type="button" onClick={() => setShowForm(false)} className="flex-1 px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg hover:bg-slate-600 transition">Cancel</button>
                 <button type="submit" className="flex-1 px-4 py-2 bg-gray-900 text-white dark:bg-white dark:text-gray-900 rounded-lg hover:bg-gray-800 dark:hover:bg-gray-200 transition flex items-center justify-center gap-2">
-                  <Save className="w-4 h-4"/> Save User
+                  <Save className="w-4 h-4" /> Save User
                 </button>
               </div>
             </form>
@@ -375,7 +372,7 @@ export function UsersPage() {
           <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl w-full max-w-md max-h-[90vh] flex flex-col overflow-hidden shadow-2xl">
             <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700 gap-4">
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2 min-w-0">
-                <Globe className="w-5 h-5 text-gray-400 shrink-0" /> 
+                <Globe className="w-5 h-5 text-gray-400 shrink-0" />
                 <span className="truncate">IP Lookup: {ipModal.ip}</span>
               </h3>
               <button onClick={() => setIpModal(prev => ({ ...prev, isOpen: false }))} className="text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:text-white transition shrink-0"><X className="w-5 h-5" /></button>
@@ -404,7 +401,7 @@ export function UsersPage() {
                         {ipModal.copied ? <CheckCircle2 className="w-4 h-4 text-green-500" /> : <Copy className="w-4 h-4" />}
                       </button>
                     </div>
-                    <pre 
+                    <pre
                       className="bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg p-4 text-xs font-mono text-gray-700 dark:text-gray-300 overflow-auto max-h-[40vh] sm:max-h-[50vh]"
                       dangerouslySetInnerHTML={{ __html: syntaxHighlight(JSON.stringify(ipModal.data, null, 2)) }}
                     />
@@ -447,7 +444,7 @@ function UserLogsModal({ user, onClose, onIpLookup }: { user: User; onClose: () 
     try {
       // Fetch up to 10000 logs for export
       const data = await api.getActivityLogs({ page: 1, limit: 10000, userId: user.id });
-      
+
       const csvHeader = 'Time,Action,IP Address,City,Country,ISP,Device Info\n';
       const csvRows = data.logs.map(log => {
         return [
@@ -460,13 +457,13 @@ function UserLogsModal({ user, onClose, onIpLookup }: { user: User; onClose: () 
           `"${log.device_info}"`
         ].join(',');
       });
-      
+
       const csvContent = csvHeader + csvRows.join('\n');
       const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.setAttribute('download', `activity_logs_${user.username}_${new Date().toISOString().slice(0,10)}.csv`);
+      link.setAttribute('download', `activity_logs_${user.username}_${new Date().toISOString().slice(0, 10)}.csv`);
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -485,7 +482,7 @@ function UserLogsModal({ user, onClose, onIpLookup }: { user: User; onClose: () 
             <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Detailed history of this user's actions</p>
           </div>
           <div className="flex items-center gap-3 w-full sm:w-auto">
-            <button 
+            <button
               onClick={handleExport}
               disabled={isExporting}
               className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition disabled:opacity-50"
@@ -527,7 +524,7 @@ function UserLogsModal({ user, onClose, onIpLookup }: { user: User; onClose: () 
                   <tbody className="divide-y divide-gray-200 dark:divide-gray-700/50">
                     {logs.map(log => (
                       <tr key={log.id} className="hover:bg-white dark:bg-gray-800/50 transition">
-                        <td className="px-6 py-4 whitespace-nowrap"><Clock className="w-3 h-3 inline mr-1 text-gray-400 dark:text-gray-500"/>{new Date(log.created_at).toLocaleString()}</td>
+                        <td className="px-6 py-4 whitespace-nowrap"><Clock className="w-3 h-3 inline mr-1 text-gray-400 dark:text-gray-500" />{new Date(log.created_at).toLocaleString()}</td>
                         <td className="px-6 py-4 text-gray-700 dark:text-gray-300 font-medium">{log.action}</td>
                         <td className="px-6 py-4 font-mono text-xs">
                           <div className="flex items-center gap-1 text-gray-700 dark:text-gray-300">
@@ -544,7 +541,7 @@ function UserLogsModal({ user, onClose, onIpLookup }: { user: User; onClose: () 
                         </td>
                         <td className="px-6 py-4 text-xs text-gray-500 dark:text-gray-400">
                           <div className="flex items-center gap-1 text-gray-700 dark:text-gray-300">
-                            <Laptop className="w-3 h-3 text-gray-400 dark:text-gray-500"/> {log.device_info}
+                            <Laptop className="w-3 h-3 text-gray-400 dark:text-gray-500" /> {log.device_info}
                           </div>
                           {log.location_data?.isp && (
                             <div className="text-gray-400 dark:text-gray-500 mt-1 pl-4 truncate max-w-xs" title={log.location_data.org || log.location_data.isp}>

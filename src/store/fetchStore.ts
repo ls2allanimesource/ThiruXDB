@@ -1,18 +1,18 @@
 /**
  * Project: ThiruXDB
  * Author: ThiruXD
- * Description: Data Synchronization Engine
+ * Description: A self-hosted API data aggregation dashboard — configure external REST endpoints, fetch & store their data into MongoDB, browse and search records, all from a clean web UI.
  */
 import { useState, useEffect } from 'react';
 import { ApiEndpoint } from '../types/database';
 import { api } from '../lib/api';
 
-type FetchProgress = { 
-  current: number; 
-  total: number; 
-  status?: string; 
-  download_loaded?: number; 
-  download_total?: number; 
+type FetchProgress = {
+  current: number;
+  total: number;
+  status?: string;
+  download_loaded?: number;
+  download_total?: number;
   download_speed?: number;
 };
 
@@ -79,16 +79,16 @@ class FetchStore {
 
   private _startPolling(id: string, onComplete?: () => void) {
     if (this.pollIntervals[id]) clearInterval(this.pollIntervals[id]);
-    
+
     this.pollIntervals[id] = setInterval(async () => {
       try {
         const status = await api.getSyncStatus(id);
-        
+
         if (status.status === 'idle') {
           this.finishFetch(id, onComplete);
         } else if (status.status === 'running' || status.status === 'downloading') {
-          this.fetchProgress[id] = { 
-            current: status.current, 
+          this.fetchProgress[id] = {
+            current: status.current,
             total: status.total,
             status: status.status,
             download_loaded: status.download_loaded,
