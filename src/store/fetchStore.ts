@@ -8,6 +8,7 @@ type FetchProgress = {
   status?: string; 
   download_loaded?: number; 
   download_total?: number; 
+  download_speed?: number;
 };
 
 class FetchStore {
@@ -86,7 +87,8 @@ class FetchStore {
             total: status.total,
             status: status.status,
             download_loaded: status.download_loaded,
-            download_total: status.download_total
+            download_total: status.download_total,
+            download_speed: status.download_speed
           };
           this.notify();
         } else if (status.status === 'completed' || status.status === 'partial' || status.status === 'error') {
