@@ -100,12 +100,12 @@ export function FetchPage() {
           <p className="text-gray-500 dark:text-gray-400 mt-1">Pull data from configured API endpoints</p>
         </div>
         {!isViewer && (
-          <div className="flex flex-wrap items-center gap-4">
-            <div className="flex items-center gap-2 bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-1.5 shrink-0">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto">
+            <div className="flex items-center justify-between sm:justify-start gap-2 bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-1.5 shrink-0">
               <span className="text-sm text-gray-500 dark:text-gray-400">Skip</span>
               <input type="number" min="0" value={globalSkip} onChange={(e) => setGlobalSkip(parseInt(e.target.value) || 0)} className="w-16 bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded px-2 py-1 text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-1 focus:ring-gray-900 dark:focus:ring-gray-100" />
             </div>
-            <button onClick={fetchSelectedEndpoints} disabled={fetchingAll || selectedIds.size === 0} className="flex items-center gap-2 px-4 py-2 bg-gray-900 text-white dark:bg-white dark:text-gray-900 rounded-lg hover:bg-gray-800 dark:hover:bg-gray-200 transition shadow-sm shadow-gray-900/10 dark:shadow-white/10 disabled:opacity-50 shrink-0">
+            <button onClick={fetchSelectedEndpoints} disabled={fetchingAll || selectedIds.size === 0} className="flex items-center justify-center gap-2 px-4 py-2 bg-gray-900 text-white dark:bg-white dark:text-gray-900 rounded-lg hover:bg-gray-800 dark:hover:bg-gray-200 transition shadow-sm shadow-gray-900/10 dark:shadow-white/10 disabled:opacity-50 shrink-0">
               {fetchingAll ? <Loader2 className="w-5 h-5 animate-spin" /> : <RefreshCw className="w-5 h-5" />}
               Fetch Selected ({selectedIds.size})
             </button>
@@ -179,32 +179,32 @@ export function FetchPage() {
                           </div>
                         </div>
                         
-                        <div className="flex items-center justify-between sm:justify-end flex-wrap gap-4 w-full sm:w-auto shrink-0 border-t border-gray-100 dark:border-gray-700/50 sm:border-0 pt-3 sm:pt-0 mt-2 sm:mt-0">
+                        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto shrink-0 border-t border-gray-100 dark:border-gray-700/50 sm:border-0 pt-3 sm:pt-0 mt-2 sm:mt-0">
                           {isFetching && progress && (
-                            <div className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300 font-medium">
+                            <div className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300 font-medium justify-between sm:justify-start">
                               <span>{progress.current} / {progress.total}</span>
                               <div className="w-24 h-1.5 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
                                 <div className="h-full bg-blue-500 transition-all duration-300" style={{ width: `${Math.min(100, (progress.current / (progress.total || 1)) * 100)}%` }} />
                               </div>
                             </div>
                           )}
-                          {!isFetching && endpoint.last_fetched_at && <span className="text-sm text-gray-400 dark:text-gray-500 flex items-center gap-1"><Clock className="w-4 h-4" />{new Date(endpoint.last_fetched_at).toLocaleString()}</span>}
+                          {!isFetching && endpoint.last_fetched_at && <span className="text-sm text-gray-400 dark:text-gray-500 flex items-center justify-between sm:justify-start gap-1"><span>Last Fetched:</span> <span className="flex items-center gap-1"><Clock className="w-4 h-4" />{new Date(endpoint.last_fetched_at).toLocaleString()}</span></span>}
                           
                           {!isViewer && !isFetching && (
-                            <div className="flex items-center gap-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg px-2 py-1">
+                            <div className="flex items-center justify-between sm:justify-start gap-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg px-2 py-1">
                               <span className="text-xs text-gray-500 dark:text-gray-400">Skip</span>
                               <input type="number" min="0" value={skipOffsets[endpoint.id] || 0} onChange={(e) => setSkipOffsets({ ...skipOffsets, [endpoint.id]: parseInt(e.target.value) || 0 })} className="w-14 bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded px-1.5 py-1 text-gray-900 dark:text-white text-xs focus:outline-none focus:ring-1 focus:ring-gray-900 dark:focus:ring-gray-100" />
                             </div>
                           )}
 
                           {!isViewer && (isFetching ? (
-                            <button onClick={() => handleCancelFetch(endpoint.id)} className="flex items-center gap-2 px-4 py-2 bg-red-600/20 text-red-400 hover:bg-red-600/30 rounded-lg transition shadow-sm shadow-red-500/20">
+                            <button onClick={() => handleCancelFetch(endpoint.id)} className="flex items-center justify-center gap-2 px-4 py-2 bg-red-600/20 text-red-400 hover:bg-red-600/30 rounded-lg transition shadow-sm shadow-red-500/20 w-full sm:w-auto">
                               <XCircle className="w-5 h-5" />
                               Cancel
                             </button>
                           ) : (
-                            <button onClick={() => fetchFromEndpoint(endpoint)} className="flex items-center gap-2 px-4 py-2 bg-gray-900 text-white dark:bg-white dark:text-gray-900 rounded-lg hover:bg-gray-800 dark:hover:bg-gray-200 transition disabled:opacity-50 shadow-sm shadow-gray-900/10 dark:shadow-white/10">
-                              <Play className="w-5 h-5" />
+                            <button onClick={() => fetchSingleEndpoint(endpoint)} className="flex items-center justify-center gap-2 px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg transition shadow-sm w-full sm:w-auto">
+                              <RefreshCw className="w-5 h-5" />
                               Fetch
                             </button>
                           ))}
