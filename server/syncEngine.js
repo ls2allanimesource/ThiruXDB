@@ -295,22 +295,19 @@ export async function runSyncJob(endpointIdStr, skipOffset) {
   flushState(true);
 
   try {
-    const url = process.env.NETLIFY ? `https://${process.env.URL || 'localhost:3001'}/api/logs` : `http://localhost:${process.env.PORT || 3001}/api/logs`;
-    await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        endpoint_id: endpointIdStr,
-        status,
-        records_fetched: recordsFetched,
-        records_created: recordsCreated,
-        records_updated: recordsUpdated,
-        error_message: errorMessage,
-        duration_ms: Date.now() - startTime,
-      }),
-    });
+    const doc = {
+      endpoint_id: new ObjectId(endpointIdStr),
+      status,
+      records_fetched: recordsFetched,
+      records_created: recordsCreated,
+      records_updated: recordsUpdated,
+      error_message: errorMessage,
+      duration_ms: Date.now() - startTime,
+      created_at: new Date(),
+    };
+    await db.collection('thiruxdb_fetch_logs').insertOne(doc);
   } catch (err) {
-    console.error('Failed to write log via API', err.message);
+    console.error('Failed to write log to database:', err.message);
   }
 
   try {
