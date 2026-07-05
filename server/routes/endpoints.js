@@ -78,7 +78,9 @@ router.post('/test', async (req, res) => {
           });
           let val = '1';
           if (sampleDoc) {
-            val = sampleDoc[s] || sampleDoc?.mapped_data?.[s] || sampleDoc?.raw_data?.[s] || '1';
+            if (sampleDoc[s] !== undefined && sampleDoc[s] !== null) val = sampleDoc[s];
+            else if (sampleDoc.mapped_data?.[s] !== undefined && sampleDoc.mapped_data?.[s] !== null) val = sampleDoc.mapped_data[s];
+            else if (sampleDoc.raw_data?.[s] !== undefined && sampleDoc.raw_data?.[s] !== null) val = sampleDoc.raw_data[s];
           }
           finalUrl = finalUrl.replace(new RegExp(pv.variable.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'), encodeURIComponent(String(val)));
         }
@@ -109,7 +111,11 @@ router.post('/test', async (req, res) => {
     clearTimeout(timeoutId);
 
     if (!response.ok) {
-      return res.status(400).json({ error: `HTTP ${response.status}: ${response.statusText}` });
+      let errText = `HTTP ${response.status}: ${response.statusText}`;
+      if (path_variables && path_variables.length > 0) {
+        errText += ` (Attempted URL: ${finalUrl})`;
+      }
+      return res.status(400).json({ error: errText });
     }
 
     const data = await response.json();
