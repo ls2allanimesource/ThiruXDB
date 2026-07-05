@@ -145,10 +145,15 @@ export function DataBrowserPage() {
 
   const getColumns = useMemo(() => {
     if (records.length === 0) return [];
-    const sampleMapped = records[0].mapped_data as Record<string, unknown>;
-    if (!sampleMapped) return [];
-    return Object.keys(sampleMapped).slice(0, 5);
+    const firstRecord = records[0].mapped_data;
+    if (!firstRecord || typeof firstRecord !== 'object') return [];
+    return Object.keys(firstRecord).slice(0, 5); // Show first 5 mapped fields
   }, [records]);
+
+  const isModified = (record: DataRecord) => {
+    if (!record.created_at || !record.updated_at) return false;
+    return new Date(record.updated_at).getTime() - new Date(record.created_at).getTime() > 1000;
+  };
 
   const endpointsByCollection = useMemo(() => {
     const grouped: Record<string, ApiEndpoint[]> = {};
@@ -318,7 +323,7 @@ export function DataBrowserPage() {
               </thead>
               <tbody className="divide-y divide-gray-200 dark:divide-gray-800">
                 {records.map((record) => (
-                  <tr key={record.id} className="hover:bg-gray-50 dark:bg-gray-700/30 cursor-pointer" onClick={() => setSelectedRecord(record)}>
+                  <tr key={record.id} className={`hover:bg-gray-50 dark:hover:bg-gray-700/30 cursor-pointer transition ${isModified(record) ? 'bg-amber-50/50 dark:bg-amber-900/10' : ''}`} onClick={() => setSelectedRecord(record)}>
                     <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
                       <input
                         type="checkbox"
@@ -327,7 +332,12 @@ export function DataBrowserPage() {
                         className="w-4 h-4 rounded border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-gray-900 dark:focus:ring-gray-100 cursor-pointer"
                       />
                     </td>
-                    <td className="px-4 py-3 text-gray-700 dark:text-gray-300">{getEndpointName(record.endpoint_id)}</td>
+                    <td className="px-4 py-3 text-gray-700 dark:text-gray-300">
+                      <div className="flex items-center gap-2">
+                        {isModified(record) && <span className="w-1.5 h-1.5 rounded-full bg-amber-500" title="Modified since creation" />}
+                        {getEndpointName(record.endpoint_id)}
+                      </div>
+                    </td>
                     <td className="px-4 py-3 font-mono text-sm text-gray-900 dark:text-white">{record.external_id || '-'}</td>
                     {getColumns.map((col) => { const mapped = record.mapped_data as Record<string, unknown>; return <td key={col} className="px-4 py-3 text-gray-700 dark:text-gray-300">{mapped?.[col] !== undefined ? String(mapped[col]).slice(0, 30) : '-'}</td>; })}
                     <td className="px-4 py-3 text-gray-400 dark:text-gray-500 text-sm whitespace-nowrap">{new Date(record.fetched_at).toLocaleDateString()}</td>
@@ -360,7 +370,7 @@ export function DataBrowserPage() {
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {records.map((record) => (
-            <div key={record.id} onClick={() => setSelectedRecord(record)} className="bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:border-gray-300 dark:border-gray-600 cursor-pointer transition relative">
+            <div key={record.id} onClick={() => setSelectedRecord(record)} className={`bg-white dark:bg-gray-800/50 border rounded-lg p-4 cursor-pointer transition relative ${isModified(record) ? 'border-amber-200 dark:border-amber-900/50 hover:border-amber-300 dark:hover:border-amber-700 shadow-[inset_4px_0_0_0_#f59e0b]' : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'}`}>
               <div className="absolute top-4 right-4 z-10" onClick={(e) => e.stopPropagation()}>
                 <input
                   type="checkbox"
