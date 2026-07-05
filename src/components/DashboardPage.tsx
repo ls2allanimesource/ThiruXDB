@@ -302,23 +302,25 @@ export function DashboardPage() {
           <div className="space-y-3">
             {endpoints.map((endpoint) => {
               const recordCount = perEndpoint[endpoint.id] || 0;
-              const percentage =
+              const maxRecordCount = Math.max(...endpoints.map(e => perEndpoint[e.id] || 0), 1);
+              const percentageOfTotal =
                 stats.totalRecords > 0
                   ? Math.round((recordCount / stats.totalRecords) * 100)
                   : 0;
+              const barWidth = Math.round((recordCount / maxRecordCount) * 100);
 
               return (
                 <div key={endpoint.id} className="space-y-1">
                   <div className="flex items-center justify-between text-sm">
                     <span className="text-slate-300">{endpoint.name}</span>
                     <span className="text-slate-500">
-                      {recordCount.toLocaleString()} ({percentage}%)
+                      {recordCount.toLocaleString()} ({percentageOfTotal}% of total)
                     </span>
                   </div>
-                  <div className="h-2 bg-slate-700 rounded-full overflow-hidden">
+                  <div className="h-2 bg-slate-700/30 rounded-full overflow-hidden">
                     <div
                       className="h-full bg-gradient-to-r from-blue-600 to-cyan-400 rounded-full transition-all duration-500"
-                      style={{ width: `${percentage}%` }}
+                      style={{ width: `${barWidth}%` }}
                     />
                   </div>
                 </div>
