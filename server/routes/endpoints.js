@@ -68,9 +68,18 @@ router.post('/test', async (req, res) => {
       const db = require('../db.js').getDb();
       for (const pv of path_variables) {
         if (pv.variable && pv.source_collection && pv.source_field) {
-          const sampleDoc = await db.collection(pv.source_collection).findOne({ [pv.source_field]: { $exists: true, $ne: null } });
-          const val = sampleDoc ? sampleDoc[pv.source_field] : '1';
-          // pv.variable usually already contains the curly braces (e.g. "{id}")
+          const s = pv.source_field;
+          const sampleDoc = await db.collection(pv.source_collection).findOne({
+            $or: [
+              { [s]: { $exists: true, $ne: null } },
+              { [`mapped_data.${s}`]: { $exists: true, $ne: null } },
+              { [`raw_data.${s}`]: { $exists: true, $ne: null } }
+            ]
+          });
+          let val = '1';
+          if (sampleDoc) {
+            val = sampleDoc[s] || sampleDoc?.mapped_data?.[s] || sampleDoc?.raw_data?.[s] || '1';
+          }
           finalUrl = finalUrl.replace(new RegExp(pv.variable.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'), encodeURIComponent(String(val)));
         }
       }
@@ -78,6 +87,7 @@ router.post('/test', async (req, res) => {
 
     // fallback for any remaining untranslated variables so it doesn't cause a 400 Bad Request
     finalUrl = finalUrl.replace(/\{[^}]+\}/g, '1');
+    console.log("TEST CONNECTION FINAL URL:", finalUrl);
 
     if (auth_type === 'bearer' && auth_config?.token) {
       headers['Authorization'] = `Bearer ${auth_config.token}`;

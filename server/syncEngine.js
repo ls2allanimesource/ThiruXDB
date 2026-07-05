@@ -75,7 +75,13 @@ export async function runSyncJob(endpointIdStr, skipOffset) {
     if (endpoint.path_variables && endpoint.path_variables.length > 0) {
       for (const pv of endpoint.path_variables) {
         if (!pv.variable || !pv.source_collection || !pv.source_field) continue;
-        const values = await db.collection(pv.source_collection).distinct(pv.source_field);
+        const s = pv.source_field;
+        const [v1, v2, v3] = await Promise.all([
+          db.collection(pv.source_collection).distinct(s),
+          db.collection(pv.source_collection).distinct(`mapped_data.${s}`),
+          db.collection(pv.source_collection).distinct(`raw_data.${s}`)
+        ]);
+        const values = Array.from(new Set([...v1, ...v2, ...v3]));
         const newUrls = [];
         for (const url of urls) {
           for (const val of values) {
