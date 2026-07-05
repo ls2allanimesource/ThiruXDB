@@ -62,7 +62,7 @@ async function ensureIndexes(db) {
   const adminCount = await users.countDocuments();
   if (adminCount === 0) {
     const defaultUser = process.env.VITE_ADMIN_USERNAME || 'admin';
-    const defaultPass = process.env.VITE_ADMIN_PASS || 'admin@123';
+    const defaultPass = process.env.VITE_ADMIN_PASS || 'changeme123!';
     const password_hash = await bcrypt.hash(defaultPass, 10);
 
     await users.insertOne({
