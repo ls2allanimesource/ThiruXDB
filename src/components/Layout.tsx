@@ -148,6 +148,13 @@ export function Layout({ children, currentPage, onNavigate }: LayoutProps) {
               </div>
             </div>
           </div>
+          
+          {/* Copyright Strip */}
+          <div className="p-4 border-t border-gray-200 dark:border-gray-800 text-center">
+            <p className="text-xs text-gray-500 dark:text-gray-400">
+              &copy; {new Date().getFullYear()} <a href="https://github.com/ThiruXD/ThiruXDB" target="_blank" rel="noopener noreferrer" className="font-medium hover:text-blue-500 transition">ThiruXD</a>
+            </p>
+          </div>
         </div>
       </aside>
 
