@@ -345,10 +345,10 @@ function StatCard({
   color: 'blue' | 'green' | 'purple' | 'red';
 }) {
   const colorClasses = {
-    blue: 'from-blue-500 to-cyan-400 shadow-gray-900/10 dark:shadow-white/10',
-    green: 'from-green-500 to-emerald-400 shadow-green-500/25',
-    purple: 'from-purple-500 to-pink-400 shadow-purple-500/25',
-    red: 'from-red-500 to-orange-400 shadow-red-500/25',
+    blue: 'bg-gray-100 dark:bg-gray-800',
+    green: 'bg-gray-100 dark:bg-gray-800',
+    purple: 'bg-gray-100 dark:bg-gray-800',
+    red: 'bg-gray-100 dark:bg-gray-800',
   };
 
   return (
@@ -360,7 +360,7 @@ function StatCard({
           <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">{subtitle}</p>
         </div>
         <div
-          className={`w-12 h-12 rounded-lg bg-gradient-to-br ${colorClasses[color]} flex items-center justify-center shadow-sm`}
+          className={`w-12 h-12 rounded-lg ${colorClasses[color]} flex items-center justify-center`}
         >
           <Icon className="w-6 h-6 text-gray-900 dark:text-white" />
         </div>

@@ -125,7 +125,7 @@ export function UsersPage() {
         <button
           onClick={() => setActiveTab('users')}
           className={`flex items-center gap-2 px-4 py-2 border-b-2 font-medium transition ${
-            activeTab === 'users' ? 'border-blue-500 text-gray-700 dark:text-gray-300' : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:text-gray-300'
+            activeTab === 'users' ? 'border-gray-900 dark:border-white text-gray-900 dark:text-white' : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:text-gray-300'
           }`}
         >
           <Users className="w-4 h-4" /> Users
@@ -133,7 +133,7 @@ export function UsersPage() {
         <button
           onClick={() => setActiveTab('activity')}
           className={`flex items-center gap-2 px-4 py-2 border-b-2 font-medium transition ${
-            activeTab === 'activity' ? 'border-blue-500 text-gray-700 dark:text-gray-300' : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:text-gray-300'
+            activeTab === 'activity' ? 'border-gray-900 dark:border-white text-gray-900 dark:text-white' : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:text-gray-300'
           }`}
         >
           <Activity className="w-4 h-4" /> Activity Logs

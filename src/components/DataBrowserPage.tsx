@@ -184,28 +184,28 @@ export function DataBrowserPage() {
           <div className="flex flex-wrap items-center gap-2">
             <button onClick={loadRecords} className="p-2 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:text-white hover:bg-gray-100 dark:bg-gray-700 rounded-lg transition" title="Refresh"><RefreshCw className="w-5 h-5" /></button>
             <button onClick={() => setViewMode(viewMode === 'table' ? 'grid' : 'table')} className="p-2 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:text-white hover:bg-gray-100 dark:bg-gray-700 rounded-lg transition">{viewMode === 'table' ? <Grid className="w-5 h-5" /> : <Table className="w-5 h-5" />}</button>
-            <button onClick={() => handleExport('csv')} className="flex items-center gap-2 px-3 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-slate-600 transition"><Download className="w-4 h-4" />CSV</button>
-            <button onClick={() => handleExport('json')} className="flex items-center gap-2 px-3 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-slate-600 transition"><FileJson className="w-4 h-4" />JSON</button>
+            <button onClick={() => handleExport('csv')} className="flex items-center gap-2 px-3 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition"><Download className="w-4 h-4" />CSV</button>
+            <button onClick={() => handleExport('json')} className="flex items-center gap-2 px-3 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition"><FileJson className="w-4 h-4" />JSON</button>
           </div>
         )}
       </div>
 
       {activeCollection === null ? (
         <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          <div onClick={() => setActiveCollection('all')} className="bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-lg p-6 cursor-pointer hover:border-blue-500 transition group flex flex-col items-center justify-center text-center gap-3">
+          <div onClick={() => setActiveCollection('all')} className="bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-lg p-6 cursor-pointer hover:border-gray-900 dark:hover:border-white transition group flex flex-col items-center justify-center text-center gap-3">
              <Database className="w-10 h-10 text-gray-400 dark:text-gray-500 group-hover:text-gray-700 dark:text-gray-300 transition" />
              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">All Records</h3>
              <p className="text-sm text-gray-500 dark:text-gray-400">View all endpoints</p>
           </div>
           {Object.keys(endpointsByCollection.grouped).map(col => (
-            <div key={col} onClick={() => setActiveCollection(col)} className="bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-lg p-6 cursor-pointer hover:border-blue-500 transition group flex flex-col items-center justify-center text-center gap-3">
+            <div key={col} onClick={() => setActiveCollection(col)} className="bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-lg p-6 cursor-pointer hover:border-gray-900 dark:hover:border-white transition group flex flex-col items-center justify-center text-center gap-3">
                <Database className="w-10 h-10 text-gray-400 dark:text-gray-500 group-hover:text-gray-700 dark:text-gray-300 transition" />
                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{col}</h3>
                <p className="text-sm text-gray-500 dark:text-gray-400">{endpointsByCollection.grouped[col].length} Endpoints</p>
             </div>
           ))}
           {endpointsByCollection.others.length > 0 && (
-            <div onClick={() => setActiveCollection('uncategorized')} className="bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-lg p-6 cursor-pointer hover:border-blue-500 transition group flex flex-col items-center justify-center text-center gap-3">
+            <div onClick={() => setActiveCollection('uncategorized')} className="bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-lg p-6 cursor-pointer hover:border-gray-900 dark:hover:border-white transition group flex flex-col items-center justify-center text-center gap-3">
                <Database className="w-10 h-10 text-gray-400 dark:text-gray-500 group-hover:text-gray-700 dark:text-gray-300 transition" />
                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Uncategorized</h3>
                <p className="text-sm text-gray-500 dark:text-gray-400">{endpointsByCollection.others.length} Endpoints</p>
@@ -224,7 +224,7 @@ export function DataBrowserPage() {
               <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && handleSearch()} placeholder="Search records..." className="w-full bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg pl-10 pr-4 py-2.5 text-gray-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-gray-900 dark:focus:ring-gray-100" />
             </div>
           </div>
-          <button onClick={() => setShowFilters(!showFilters)} className={`flex items-center gap-2 px-4 py-2.5 rounded-lg transition ${showFilters ? 'bg-gray-900 text-white dark:bg-white dark:text-gray-900' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-slate-600'}`}><Filter className="w-5 h-5" />Filters</button>
+          <button onClick={() => setShowFilters(!showFilters)} className={`flex items-center gap-2 px-4 py-2.5 rounded-lg transition ${showFilters ? 'bg-gray-900 text-white dark:bg-white dark:text-gray-900' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'}`}><Filter className="w-5 h-5" />Filters</button>
           <button onClick={handleSearch} className="px-6 py-2.5 bg-gray-900 text-white dark:bg-white dark:text-gray-900 rounded-lg hover:bg-gray-800 dark:hover:bg-gray-200 transition">Search</button>
         </div>
 
@@ -258,12 +258,12 @@ export function DataBrowserPage() {
         )}
 
         {(selectedEndpoint !== 'all' || dateFrom || dateTo || searchQuery) && (
-          <button onClick={clearFilters} className="flex items-center gap-1 text-sm text-gray-700 dark:text-gray-300 hover:text-blue-300 mt-4"><X className="w-4 h-4" />Clear filters</button>
+          <button onClick={clearFilters} className="flex items-center gap-1 text-sm text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white mt-4"><X className="w-4 h-4" />Clear filters</button>
         )}
       </div>
 
       {selectedIds.size > 0 && (
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-blue-900/30 border border-gray-200 dark:border-gray-700 rounded-lg p-3">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 rounded-lg p-3">
           <span className="text-sm text-gray-700 dark:text-gray-300 font-medium">{selectedIds.size} records selected</span>
           <button
             onClick={handleBulkDelete}
@@ -456,14 +456,14 @@ function RecordDetailModal({ record, endpointName, onClose, onDeleted, isViewer 
         <div className="p-6 overflow-y-auto max-h-[calc(90vh-200px)]">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
             <div className="flex gap-2">
-              <button onClick={() => setView('mapped')} className={`px-4 py-2 rounded-lg text-sm font-medium transition ${view === 'mapped' ? 'bg-gray-900 text-white dark:bg-white dark:text-gray-900' : 'bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 hover:bg-slate-600'}`}>Mapped Data</button>
-              <button onClick={() => setView('raw')} className={`px-4 py-2 rounded-lg text-sm font-medium transition ${view === 'raw' ? 'bg-gray-900 text-white dark:bg-white dark:text-gray-900' : 'bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 hover:bg-slate-600'}`}>Raw JSON</button>
+              <button onClick={() => setView('mapped')} className={`px-4 py-2 rounded-lg text-sm font-medium transition ${view === 'mapped' ? 'bg-gray-900 text-white dark:bg-white dark:text-gray-900' : 'bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-600'}`}>Mapped Data</button>
+              <button onClick={() => setView('raw')} className={`px-4 py-2 rounded-lg text-sm font-medium transition ${view === 'raw' ? 'bg-gray-900 text-white dark:bg-white dark:text-gray-900' : 'bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-600'}`}>Raw JSON</button>
             </div>
             <div className="flex gap-2">
-              <button onClick={handleCopyJSON} className="flex items-center gap-2 px-3 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-slate-600 transition text-sm">
+              <button onClick={handleCopyJSON} className="flex items-center gap-2 px-3 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition text-sm">
                 <Copy className="w-4 h-4" /> Copy
               </button>
-              <button onClick={handleDownloadJSON} className="flex items-center gap-2 px-3 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-slate-600 transition text-sm">
+              <button onClick={handleDownloadJSON} className="flex items-center gap-2 px-3 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition text-sm">
                 <Download className="w-4 h-4" /> Download
               </button>
             </div>
@@ -473,7 +473,7 @@ function RecordDetailModal({ record, endpointName, onClose, onDeleted, isViewer 
             <div className="space-y-4">
               <textarea value={editedData} onChange={(e) => setEditedData(e.target.value)} className="w-full h-64 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-lg p-4 font-mono text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-gray-900 dark:focus:ring-gray-100" />
               <div className="flex gap-2">
-                <button onClick={() => setIsEditing(false)} className="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg hover:bg-slate-600 transition">Cancel</button>
+                <button onClick={() => setIsEditing(false)} className="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition">Cancel</button>
                 <button onClick={handleSave} disabled={isSaving} className="px-4 py-2 bg-gray-900 text-white dark:bg-white dark:text-gray-900 rounded-lg hover:bg-gray-800 dark:hover:bg-gray-200 transition disabled:opacity-50">{isSaving ? 'Saving...' : 'Save Changes'}</button>
               </div>
             </div>
@@ -492,7 +492,7 @@ function RecordDetailModal({ record, endpointName, onClose, onDeleted, isViewer 
             <button onClick={handleDelete} disabled={isDeleting} className="flex items-center gap-2 px-4 py-2 text-red-400 hover:bg-red-500/10 rounded-lg transition disabled:opacity-50"><Trash2 className="w-4 h-4" />{isDeleting ? 'Deleting...' : 'Delete'}</button>
           )}
           <div className="flex gap-2">
-            {!isViewer && view === 'mapped' && <button onClick={() => setIsEditing(!isEditing)} className="flex items-center gap-2 px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg hover:bg-slate-600 transition"><Edit className="w-4 h-4" />Edit</button>}
+            {!isViewer && view === 'mapped' && <button onClick={() => setIsEditing(!isEditing)} className="flex items-center gap-2 px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition"><Edit className="w-4 h-4" />Edit</button>}
             <button onClick={onClose} className="px-6 py-2 bg-gray-900 text-white dark:bg-white dark:text-gray-900 rounded-lg hover:bg-gray-800 dark:hover:bg-gray-200 transition">Close</button>
           </div>
         </div>
