@@ -206,8 +206,12 @@ router.post('/:id/sync', async (req, res) => {
   try {
     const db = require('../db.js').getDb();
     const existing = await db.collection('sync_jobs').findOne({ endpoint_id: endpointId });
-    if (existing && existing.status !== 'completed' && existing.status !== 'error') {
-      return res.status(400).json({ error: 'Sync already in progress' });
+    if (existing && existing.status !== 'completed' && existing.status !== 'error' && existing.status !== 'partial') {
+      const lastUpdate = existing.updated_at ? new Date(existing.updated_at) : new Date(0);
+      const isStale = (new Date() - lastUpdate) / 1000 > 30;
+      if (!isStale) {
+        return res.status(400).json({ error: 'Sync already in progress' });
+      }
     }
 
     await db.collection('sync_jobs').updateOne(
