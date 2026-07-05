@@ -52,6 +52,43 @@ router.post('/', async (req, res) => {
   }
 });
 
+// POST /api/endpoints/test — test connection
+router.post('/test', async (req, res) => {
+  try {
+    const { base_url, auth_type, auth_config } = req.body;
+    const headers = { 'Content-Type': 'application/json' };
+    
+    if (auth_type === 'bearer' && auth_config?.token) {
+      headers['Authorization'] = `Bearer ${auth_config.token}`;
+    } else if (auth_type === 'api_key' && auth_config?.headers) {
+      Object.assign(headers, auth_config.headers);
+    } else if (auth_type === 'basic' && auth_config?.username && auth_config?.password) {
+      const b64 = Buffer.from(`${auth_config.username}:${auth_config.password}`).toString('base64');
+      headers['Authorization'] = `Basic ${b64}`;
+    }
+
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10000);
+    
+    const response = await fetch(base_url, { 
+      headers, 
+      signal: controller.signal 
+    });
+    
+    clearTimeout(timeoutId);
+
+    if (!response.ok) {
+      return res.status(400).json({ error: `HTTP ${response.status}: ${response.statusText}` });
+    }
+    
+    const data = await response.json();
+    res.json(data);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
+
 // PUT /api/endpoints/:id — update
 router.put('/:id', async (req, res) => {
   try {

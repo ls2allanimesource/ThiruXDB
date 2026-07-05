@@ -45,6 +45,9 @@ export const api = {
   getEndpoints: (): Promise<ApiEndpoint[]> =>
     request('/endpoints'),
 
+  testEndpoint: (data: Partial<EndpointFormData>): Promise<any> =>
+    request('/endpoints/test', { method: 'POST', body: JSON.stringify(data) }),
+
   createEndpoint: (data: EndpointFormData): Promise<ApiEndpoint> =>
     request('/endpoints', { method: 'POST', body: JSON.stringify(data) }),
 

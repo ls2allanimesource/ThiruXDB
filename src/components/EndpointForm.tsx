@@ -66,20 +66,7 @@ export function EndpointForm({ endpoint, onSave, onCancel }: EndpointFormProps) 
     setIsTesting(true);
     setTestResult(null);
     try {
-      const headers: Record<string, string> = { 'Content-Type': 'application/json' };
-      if (formData.auth_type === 'bearer') {
-        const token = (formData.auth_config as { token?: string }).token;
-        if (token) headers['Authorization'] = `Bearer ${token}`;
-      } else if (formData.auth_type === 'api_key') {
-        const kh = (formData.auth_config as { headers?: Record<string, string> }).headers;
-        if (kh) Object.assign(headers, kh);
-      } else if (formData.auth_type === 'basic') {
-        const { username, password } = formData.auth_config as { username?: string; password?: string };
-        if (username && password) headers['Authorization'] = `Basic ${btoa(`${username}:${password}`)}`;
-      }
-      const response = await fetch(formData.base_url, { headers });
-      if (!response.ok) throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-      const data = await response.json();
+      const data = await api.testEndpoint(formData);
       setTestResult({ success: true, message: 'Connection successful!', sampleData: data });
     } catch (err) {
       setTestResult({ success: false, message: `Connection failed: ${(err as Error).message}` });
