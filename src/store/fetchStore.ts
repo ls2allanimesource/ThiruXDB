@@ -43,31 +43,48 @@ class FetchStore {
 
     try {
       await api.startSync(endpoint.id, skipOffset);
-
-      // Start polling status
-      this.pollIntervals[endpoint.id] = setInterval(async () => {
-        try {
-          const status = await api.getSyncStatus(endpoint.id);
-          
-          if (status.status === 'idle') {
-            // Edge case: backend doesn't know about this job anymore
-            this.finishFetch(endpoint.id, onComplete);
-          } else if (status.status === 'running') {
-            this.fetchProgress[endpoint.id] = { current: status.current, total: status.total };
-            this.notify();
-          } else if (status.status === 'completed' || status.status === 'partial' || status.status === 'error') {
-            this.finishFetch(endpoint.id, onComplete);
-          }
-        } catch (err) {
-          console.error('Failed to get sync status:', err);
-          this.finishFetch(endpoint.id, onComplete);
-        }
-      }, 1000);
-
+      this._startPolling(endpoint.id, onComplete);
     } catch (err) {
       console.error('Failed to start fetch:', err);
       this.finishFetch(endpoint.id, onComplete);
     }
+  }
+
+  async restoreFetches(onCompleteMap?: Record<string, () => void>) {
+    try {
+      const { activeIds } = await api.getActiveSyncs();
+      activeIds.forEach(id => {
+        if (!this.fetchingIds.has(id)) {
+          this.fetchingIds.add(id);
+          this._startPolling(id, onCompleteMap?.[id]);
+        }
+      });
+      if (activeIds.length > 0) this.notify();
+    } catch (err) {
+      console.error('Failed to restore fetches:', err);
+    }
+  }
+
+  private _startPolling(id: string, onComplete?: () => void) {
+    if (this.pollIntervals[id]) clearInterval(this.pollIntervals[id]);
+    
+    this.pollIntervals[id] = setInterval(async () => {
+      try {
+        const status = await api.getSyncStatus(id);
+        
+        if (status.status === 'idle') {
+          this.finishFetch(id, onComplete);
+        } else if (status.status === 'running') {
+          this.fetchProgress[id] = { current: status.current, total: status.total };
+          this.notify();
+        } else if (status.status === 'completed' || status.status === 'partial' || status.status === 'error') {
+          this.finishFetch(id, onComplete);
+        }
+      } catch (err) {
+        console.error('Failed to get sync status:', err);
+        this.finishFetch(id, onComplete);
+      }
+    }, 1000);
   }
 
   private finishFetch(id: string, onComplete?: () => void) {
@@ -104,5 +121,6 @@ export function useFetchStore() {
     fetchProgress: state.fetchProgress,
     startFetch: (endpoint: ApiEndpoint, skipOffset: number = 0, onComplete?: () => void) => fetchStore.startFetch(endpoint, skipOffset, onComplete),
     cancelFetch: (id: string) => fetchStore.cancelFetch(id),
+    restoreFetches: (onCompleteMap?: Record<string, () => void>) => fetchStore.restoreFetches(onCompleteMap),
   };
 }

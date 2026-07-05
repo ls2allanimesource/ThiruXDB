@@ -19,9 +19,12 @@ export function FetchPage() {
   const { user } = useAuth();
   const isViewer = user?.role === 'viewer';
   
-  const { fetchingIds, fetchProgress, startFetch, cancelFetch } = useFetchStore();
+  const { fetchingIds, fetchProgress, startFetch, cancelFetch, restoreFetches } = useFetchStore();
 
-  useEffect(() => { loadData(); }, []);
+  useEffect(() => { 
+    loadData();
+    restoreFetches();
+  }, []);
 
   const loadData = async () => {
     setIsLoading(true);

@@ -435,6 +435,14 @@ router.post('/:id/cancel-sync', (req, res) => {
   }
 });
 
+router.get('/active-syncs', (req, res) => {
+  const activeIds = Array.from(activeSyncJobs.keys()).filter(id => {
+    const job = activeSyncJobs.get(id);
+    return job && job.status === 'running' && !job.cancelled;
+  });
+  res.json({ activeIds });
+});
+
 router.post('/sync-stats', async (req, res) => {
   try {
     const db = getDb();

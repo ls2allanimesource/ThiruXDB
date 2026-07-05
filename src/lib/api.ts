@@ -162,6 +162,9 @@ export const api = {
   getSyncStatus: (id: string): Promise<{ status: 'idle' | 'running' | 'completed' | 'partial' | 'error'; current: number; total: number; error: string | null; cancelled: boolean }> =>
     request(`/endpoints/${id}/sync-status`),
 
+  getActiveSyncs: (): Promise<{ activeIds: string[] }> =>
+    request('/endpoints/active-syncs'),
+
   cancelSync: (id: string): Promise<{ message: string }> =>
     request(`/endpoints/${id}/cancel-sync`, { method: 'POST' }),
 
