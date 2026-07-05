@@ -10,7 +10,10 @@ Check out the live deployment of ThiruXDB here:
 - **Username:** `demo`
 - **Password:** `demo@123`
 
-<video src="public/ThiruXDB-Screen-Recording.webm" controls="controls" muted="muted" playsinline="playsinline" style="max-width: 100%;"></video>
+<video src="public/ThiruXDB-Screen-Recording.webm" controls="controls" autoplay="autoplay" muted="muted" loop="loop" playsinline="playsinline" width="100%">
+  Your browser does not support the video tag.
+</video>
+
 
 ---
 
