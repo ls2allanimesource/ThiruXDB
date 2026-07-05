@@ -52,7 +52,7 @@ async function ensureIndexes(db) {
   // Users indexes
   const users = db.collection('users');
   await users.createIndex({ username: 1 }, { unique: true });
-  
+
   // Activity logs indexes
   const activityLogs = db.collection('user_activity_logs');
   await activityLogs.createIndex({ user_id: 1, created_at: -1 });
@@ -62,9 +62,9 @@ async function ensureIndexes(db) {
   const adminCount = await users.countDocuments();
   if (adminCount === 0) {
     const defaultUser = process.env.VITE_ADMIN_USERNAME || 'admin';
-    const defaultPass = process.env.VITE_ADMIN_PASS || 'admin';
+    const defaultPass = process.env.VITE_ADMIN_PASS || 'admin@123';
     const password_hash = await bcrypt.hash(defaultPass, 10);
-    
+
     await users.insertOne({
       username: defaultUser,
       password_hash,
