@@ -151,6 +151,9 @@ export const api = {
   cancelSync: (id: string): Promise<{ message: string }> =>
     request(`/endpoints/${id}/cancel-sync`, { method: 'POST' }),
 
+  syncEndpointStats: (): Promise<{ message: string }> =>
+    request('/endpoints/sync-stats', { method: 'POST' }),
+
   // Dashboard
   getDashboard: (): Promise<{
     system: {

@@ -233,6 +233,7 @@ router.post('/', async (req, res) => {
       updated_at: now,
     };
     await db.collection(targetCol).insertOne(doc);
+    await db.collection('api_endpoints').updateOne({ _id: endpointId }, { $inc: { record_count: 1 } });
 
     res.status(201).json({ action: 'created' });
   } catch (err) {
@@ -272,8 +273,13 @@ router.delete('/:id', async (req, res) => {
     const targetCols = await getTargetCollections(db);
     
     for (const col of targetCols) {
-      const resDb = await db.collection(col).deleteOne({ _id });
-      if (resDb.deletedCount > 0) break;
+      const deletedDoc = await db.collection(col).findOneAndDelete({ _id });
+      if (deletedDoc) {
+        if (deletedDoc.endpoint_id) {
+          await db.collection('api_endpoints').updateOne({ _id: deletedDoc.endpoint_id }, { $inc: { record_count: -1 } });
+        }
+        break;
+      }
     }
     
     res.json({ success: true });
@@ -291,8 +297,23 @@ router.post('/bulk-delete', async (req, res) => {
     
     let deletedCount = 0;
     for (const col of targetCols) {
-      const resDb = await db.collection(col).deleteMany({ _id: { $in: ids } });
-      deletedCount += resDb.deletedCount;
+      const docsToDelete = await db.collection(col).find({ _id: { $in: ids } }).toArray();
+      if (docsToDelete.length > 0) {
+        const endpointCounts = {};
+        for (const doc of docsToDelete) {
+          if (doc.endpoint_id) {
+            const epIdStr = doc.endpoint_id.toString();
+            endpointCounts[epIdStr] = (endpointCounts[epIdStr] || 0) + 1;
+          }
+        }
+        
+        const resDb = await db.collection(col).deleteMany({ _id: { $in: ids } });
+        deletedCount += resDb.deletedCount;
+        
+        for (const [epIdStr, count] of Object.entries(endpointCounts)) {
+          await db.collection('api_endpoints').updateOne({ _id: new ObjectId(epIdStr) }, { $inc: { record_count: -count } });
+        }
+      }
     }
 
     res.json({ success: true, deletedCount });

@@ -23,14 +23,15 @@ router.get('/', async (req, res) => {
       // All endpoints
       db.collection('api_endpoints').find({}).sort({ created_at: -1 }).toArray(),
 
-      // Total record count
-      db.collection('data_records').countDocuments({}),
-
-      // Records this week
-      db.collection('data_records').countDocuments({ created_at: { $gte: weekAgo } }),
+      // Records this week from fetch_logs
+      db.collection('fetch_logs').aggregate([
+        { $match: { created_at: { $gte: weekAgo } } },
+        { $group: { _id: null, count: { $sum: '$records_created' } } }
+      ]).toArray(),
 
       // 5 most recent records
-      db.collection('data_records').find({}).sort({ fetched_at: -1 }).limit(5).toArray(),
+      // Note: we fetch recent logs for the dashboard instead of scanning across all collections for recent records
+      db.collection('fetch_logs').find({}).sort({ created_at: -1 }).limit(5).toArray(),
 
       // 5 most recent logs with endpoint names (via lookup)
       db.collection('fetch_logs').aggregate([
@@ -46,18 +47,18 @@ router.get('/', async (req, res) => {
         },
         { $unwind: { path: '$endpoint', preserveNullAndEmptyArrays: true } },
       ]).toArray(),
-
-      // Per-endpoint record counts
-      db.collection('data_records').aggregate([
-        { $group: { _id: '$endpoint_id', count: { $sum: 1 } } },
-      ]).toArray(),
     ]);
 
-    // Build perEndpoint count map
+    // Build perEndpoint count map and totalRecords
     const perEndpoint = {};
-    for (const r of recordCounts) {
-      perEndpoint[r._id ? r._id.toString() : 'null'] = r.count;
+    let totalRecords = 0;
+    for (const ep of endpoints) {
+      const count = ep.record_count || 0;
+      perEndpoint[ep._id.toString()] = count;
+      totalRecords += count;
     }
+
+    const recordsThisWeekCount = recordsThisWeek[0] ? recordsThisWeek[0].count : 0;
 
     // Compute stats
     const activeEndpoints = endpoints.filter((e) => e.is_active);
@@ -80,12 +81,12 @@ router.get('/', async (req, res) => {
         totalEndpoints: endpoints.length,
         activeEndpoints: activeEndpoints.length,
         totalRecords,
-        recordsThisWeek,
+        recordsThisWeek: recordsThisWeekCount,
         lastFetchTime: lastFetchTime instanceof Date ? lastFetchTime.toISOString() : lastFetchTime,
         errors: endpointsWithErrors.length,
       },
       endpoints: endpoints.map(endpointToClient),
-      recentRecords: recentRecords.map(recordToClient),
+      recentRecords: [], // Removing recent records to prevent heavy multi-collection scans
       recentLogs: recentLogs.map((log) => ({
         id: log._id.toString(),
         endpoint_id: log.endpoint_id ? log.endpoint_id.toString() : null,

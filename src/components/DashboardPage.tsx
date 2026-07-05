@@ -44,6 +44,7 @@ export function DashboardPage() {
   const [recentRecords, setRecentRecords] = useState<DataRecord[]>([]);
   const [recentLogs, setRecentLogs] = useState<(FetchLog & { endpoint_name: string })[]>([]);
   const [perEndpoint, setPerEndpoint] = useState<Record<string, number>>({});
+  const [isSyncingStats, setIsSyncingStats] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -82,12 +83,32 @@ export function DashboardPage() {
           <h1 className="text-2xl font-bold text-white">Dashboard</h1>
           <p className="text-slate-400 mt-1">Overview of your API data sources</p>
         </div>
-        <button
-          onClick={loadDashboardData}
-          className="p-2 text-slate-400 hover:text-white hover:bg-slate-700 rounded-lg transition"
-        >
-          <RefreshCw className="w-5 h-5" />
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={async () => {
+              setIsSyncingStats(true);
+              try {
+                await api.syncEndpointStats();
+                await loadDashboardData();
+              } catch (err) {
+                console.error(err);
+              }
+              setIsSyncingStats(false);
+            }}
+            disabled={isSyncingStats}
+            className="flex items-center gap-2 px-4 py-2 bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 rounded-lg transition disabled:opacity-50 border border-slate-700"
+          >
+            <RefreshCw className={`w-4 h-4 ${isSyncingStats ? 'animate-spin' : ''}`} />
+            <span className="hidden sm:inline">{isSyncingStats ? 'Syncing...' : 'Sync Stats'}</span>
+          </button>
+          <button
+            onClick={loadDashboardData}
+            className="p-2 text-slate-400 hover:text-white hover:bg-slate-700 rounded-lg transition border border-transparent hover:border-slate-700"
+            title="Refresh Dashboard"
+          >
+            <RefreshCw className="w-5 h-5" />
+          </button>
+        </div>
       </div>
 
       {/* System Status Banner */}

@@ -36,9 +36,9 @@ router.post('/', async (req, res) => {
       auth_config: req.body.auth_config || {},
       field_mappings: req.body.field_mappings || [],
       response_path: req.body.response_path || '',
-      pagination_type: req.body.pagination_type || 'none',
       pagination_config: req.body.pagination_config || {},
       is_active: req.body.is_active !== undefined ? req.body.is_active : true,
+      record_count: 0,
       last_fetched_at: null,
       last_error: null,
       created_at: now,
@@ -270,12 +270,18 @@ async function runSyncJob(endpointIdStr, skipOffset) {
       job.current = i + 1;
     }
 
-    await db.collection(COL).updateOne({ _id: endpointId }, { $set: { last_fetched_at: new Date(), last_error: null, updated_at: new Date() } });
+    await db.collection(COL).updateOne({ _id: endpointId }, { 
+      $set: { last_fetched_at: new Date(), last_error: null, updated_at: new Date() },
+      $inc: { record_count: recordsCreated }
+    });
   } catch (err) {
     status = 'error';
     errorMessage = err.message;
     job.error = errorMessage;
-    await db.collection(COL).updateOne({ _id: endpointId }, { $set: { last_error: errorMessage, updated_at: new Date() } });
+    await db.collection(COL).updateOne({ _id: endpointId }, { 
+      $set: { last_error: errorMessage, updated_at: new Date() },
+      $inc: { record_count: recordsCreated }
+    });
   }
 
   await db.collection('fetch_logs').insertOne({
@@ -328,6 +334,21 @@ router.post('/:id/cancel-sync', (req, res) => {
     res.json({ message: 'Cancellation requested' });
   } else {
     res.json({ message: 'No active job to cancel' });
+  }
+});
+
+router.post('/sync-stats', async (req, res) => {
+  try {
+    const db = getDb();
+    const endpoints = await db.collection(COL).find({}).toArray();
+    for (const ep of endpoints) {
+      const targetCol = ep.collection_name || 'data_records';
+      const count = await db.collection(targetCol).countDocuments({ endpoint_id: ep._id });
+      await db.collection(COL).updateOne({ _id: ep._id }, { $set: { record_count: count } });
+    }
+    res.json({ success: true, message: 'Stats synced successfully' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 });
 
