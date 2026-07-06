@@ -33,7 +33,7 @@ router.get('/', async (req, res) => {
 
     const filter = {};
     if (req.query.endpoint_id && req.query.endpoint_id !== 'all') {
-      filter.endpoint_id = new ObjectId(req.query.endpoint_id);
+      filter.endpoint_id = { $in: [req.query.endpoint_id, new ObjectId(req.query.endpoint_id)] };
     }
 
     if (req.query.date_from) {
