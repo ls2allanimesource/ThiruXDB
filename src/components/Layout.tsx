@@ -34,7 +34,7 @@ const navItems = [
   { id: 'logs', label: 'Fetch Logs', icon: FileJson },
 ];
 
-import { Users } from 'lucide-react';
+import { Users, Terminal } from 'lucide-react';
 
 export function Layout({ children, currentPage, onNavigate }: LayoutProps) {
   const { user, logout } = useAuth();
@@ -222,19 +222,34 @@ export function Layout({ children, currentPage, onNavigate }: LayoutProps) {
               </button>
             ))}
             {user?.role === 'admin' && (
-              <button
-                onClick={() => {
-                  onNavigate('users');
-                  setSidebarOpen(false);
-                }}
-                className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${currentPage === 'users'
-                  ? 'bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white font-semibold'
-                  : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white'
-                  }`}
-              >
-                <Users className="w-5 h-5" />
-                <span className="font-medium">Users & Activity</span>
-              </button>
+              <>
+                <button
+                  onClick={() => {
+                    onNavigate('livelogs');
+                    setSidebarOpen(false);
+                  }}
+                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${currentPage === 'livelogs'
+                    ? 'bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white font-semibold'
+                    : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white'
+                    }`}
+                >
+                  <Terminal className="w-5 h-5" />
+                  <span className="font-medium">Live Terminal Logs</span>
+                </button>
+                <button
+                  onClick={() => {
+                    onNavigate('users');
+                    setSidebarOpen(false);
+                  }}
+                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${currentPage === 'users'
+                    ? 'bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white font-semibold'
+                    : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white'
+                    }`}
+                >
+                  <Users className="w-5 h-5" />
+                  <span className="font-medium">Users & Activity</span>
+                </button>
+              </>
             )}
           </nav>
 

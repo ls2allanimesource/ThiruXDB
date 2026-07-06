@@ -318,6 +318,19 @@ router.get('/:id/sync-status', async (req, res) => {
   }
 });
 
+router.get('/:id/live-logs', async (req, res) => {
+  try {
+    const db = require('../db.js').getDb();
+    const logs = await db.collection('thiruxdb_live_logs')
+      .find({ endpoint_id: req.params.id })
+      .sort({ timestamp: 1 })
+      .toArray();
+    res.json(logs);
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
 router.post('/:id/cancel-sync', async (req, res) => {
   try {
     const db = require('../db.js').getDb();

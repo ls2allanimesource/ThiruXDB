@@ -14,6 +14,7 @@ import { FetchPage } from './components/FetchPage';
 import { DataBrowserPage } from './components/DataBrowserPage';
 import { LogsPage } from './components/LogsPage';
 import { UsersPage } from './components/UsersPage';
+import LiveLogsPage from './components/LiveLogsPage';
 
 function AppContent() {
   const { isAuthenticated, user } = useAuth();
@@ -48,6 +49,8 @@ function AppContent() {
         return <DataBrowserPage />;
       case 'logs':
         return <LogsPage />;
+      case 'livelogs':
+        return <LiveLogsPage />;
       case 'users':
         return <UsersPage />;
       default:

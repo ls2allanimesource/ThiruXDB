@@ -50,6 +50,19 @@ export async function runSyncJob(endpointIdStr, skipOffset) {
     }
   };
 
+  const pushLog = (message, type = 'info') => {
+    db.collection('thiruxdb_live_logs').insertOne({
+      endpoint_id: endpointIdStr,
+      message,
+      type,
+      timestamp: new Date()
+    }).catch(() => {}); // silently fail to not interrupt sync
+  };
+
+  // Clear previous live logs for this endpoint
+  await db.collection('thiruxdb_live_logs').deleteMany({ endpoint_id: endpointIdStr });
+  pushLog(`Starting sync job for endpoint ID: ${endpointIdStr}`, 'system');
+
   const startTime = Date.now();
   let status = 'success';
   let errorMessage = null;
@@ -180,25 +193,30 @@ export async function runSyncJob(endpointIdStr, skipOffset) {
           let attempt = 0;
           while (attempt < 3) {
             try {
+              pushLog(`[GET] ${url} (Attempt ${attempt + 1})`, 'info');
               const response = await fetch(url, { headers });
               if (response.status === 429) {
-                // Rate limited, wait and retry
+                pushLog(`[WARN] Rate limited (429) for ${url}. Waiting before retry...`, 'warning');
                 await new Promise(r => setTimeout(r, 2000 * (attempt + 1)));
                 attempt++;
                 continue;
               }
               if (!response.ok) {
+                pushLog(`[ERROR] HTTP ${response.status} fetching ${url}`, 'error');
                 console.error(`Error fetching ${url}: HTTP ${response.status}`);
                 return null;
               }
               const data = await response.json();
+              pushLog(`[SUCCESS] Fetched data from ${url}`, 'success');
               return data;
             } catch (err) {
+              pushLog(`[ERROR] Exception fetching ${url}: ${err.message}`, 'error');
               console.error(`Error fetching ${url}: ${err.message}`);
               await new Promise(r => setTimeout(r, 1000 * (attempt + 1)));
               attempt++;
             }
           }
+          pushLog(`[FAILED] Max retries reached for ${url}`, 'error');
           return null;
         });
 
@@ -221,10 +239,13 @@ export async function runSyncJob(endpointIdStr, skipOffset) {
 
         if (bulkOps.length > 0 && !jobState.cancelled) {
           try {
+            pushLog(`Committing ${bulkOps.length} operations to database...`, 'system');
             const result = await db.collection(targetCol).bulkWrite(bulkOps, { ordered: false });
             recordsUpdated += result.modifiedCount || 0;
             recordsCreated += (result.upsertedCount || 0) + (result.insertedCount || 0);
+            pushLog(`Database Result: ${result.upsertedCount || 0} created, ${result.modifiedCount || 0} updated. (Matches without changes are skipped)`, 'success');
           } catch (bulkErr) {
+            pushLog(`[ERROR] Database bulk write partially failed: ${bulkErr.message}`, 'error');
             console.error('Bulk write error:', bulkErr.message);
             if (bulkErr.result) {
               recordsUpdated += bulkErr.result.nModified || 0;
@@ -358,6 +379,7 @@ export async function runSyncJob(endpointIdStr, skipOffset) {
     status = 'error';
     errorMessage = err.message;
     jobState.error = err.message;
+    pushLog(`[FATAL ERROR] Job failed: ${err.message}`, 'error');
   }
 
   if (status !== 'partial') {
@@ -365,6 +387,7 @@ export async function runSyncJob(endpointIdStr, skipOffset) {
   }
   jobState.status = status;
   flushState(true);
+  pushLog(`Job finished with status: ${status}. Fetched: ${recordsFetched}, Created: ${recordsCreated}, Updated: ${recordsUpdated}.`, 'system');
 
   try {
     const doc = {

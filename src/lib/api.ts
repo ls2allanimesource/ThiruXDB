@@ -181,6 +181,9 @@ export const api = {
   cancelSync: (id: string): Promise<{ message: string }> =>
     request(`/endpoints/${id}/cancel-sync`, { method: 'POST' }),
 
+  getLiveLogs: (id: string): Promise<any[]> =>
+    request(`/endpoints/${id}/live-logs`),
+
   syncEndpointStats: (): Promise<{ message: string }> =>
     request('/endpoints/sync-stats', { method: 'POST' }),
 
