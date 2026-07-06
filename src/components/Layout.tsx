@@ -62,7 +62,29 @@ export function Layout({ children, currentPage, onNavigate }: LayoutProps) {
         if ((e.metaKey || e.ctrlKey) && e.shiftKey && ['s', 'S', '3', '4', '5'].includes(e.key)) {
           e.preventDefault();
         }
+        // Block DevTools shortcuts
+        if (e.key === 'F12') e.preventDefault();
+        if ((e.ctrlKey || e.metaKey) && e.shiftKey && ['i', 'I', 'j', 'J', 'c', 'C'].includes(e.key)) {
+          e.preventDefault();
+        }
+        if ((e.ctrlKey || e.metaKey) && (e.key === 'u' || e.key === 'U')) {
+          e.preventDefault();
+        }
       };
+
+      let devtoolsDetector: number;
+      const startDevToolsDetector = () => {
+        devtoolsDetector = window.setInterval(() => {
+          const start = performance.now();
+          // eslint-disable-next-line no-debugger
+          debugger;
+          if (performance.now() - start > 100) {
+            document.body.innerHTML = '<div style="padding: 50px; text-align: center; font-family: sans-serif; background: #fff; color: #000; height: 100vh;">Security policy prevents Developer Tools. Please close them and refresh the page.</div>';
+            clearInterval(devtoolsDetector);
+          }
+        }, 1000);
+      };
+      startDevToolsDetector();
 
       const handleWindowBlur = () => {
         document.body.style.filter = 'blur(10px)';
@@ -92,6 +114,7 @@ export function Layout({ children, currentPage, onNavigate }: LayoutProps) {
         window.removeEventListener('blur', handleWindowBlur);
         window.removeEventListener('focus', handleWindowFocus);
         document.head.removeChild(style);
+        clearInterval(devtoolsDetector);
         // Clean up styles
         document.body.style.filter = 'none';
         document.body.style.opacity = '1';
