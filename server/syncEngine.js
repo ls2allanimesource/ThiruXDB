@@ -152,7 +152,7 @@ export async function runSyncJob(endpointIdStr, skipOffset) {
     if (isMultiUrl) {
       jobState.status = 'running';
       flushState(true);
-      const CONCURRENCY = 50;
+      const CONCURRENCY = 5;
 
       for (let i = 0; i < urls.length; i += CONCURRENCY) {
         if (jobState.cancelled) {
@@ -163,15 +163,29 @@ export async function runSyncJob(endpointIdStr, skipOffset) {
 
         const batchUrls = urls.slice(i, i + CONCURRENCY);
         const batchPromises = batchUrls.map(async (url) => {
-          try {
-            const response = await fetch(url, { headers });
-            if (!response.ok) return null;
-            const data = await response.json();
-            return data;
-          } catch (err) {
-            console.error(`Error fetching ${url}: ${err.message}`);
-            return null;
+          let attempt = 0;
+          while (attempt < 3) {
+            try {
+              const response = await fetch(url, { headers });
+              if (response.status === 429) {
+                // Rate limited, wait and retry
+                await new Promise(r => setTimeout(r, 2000 * (attempt + 1)));
+                attempt++;
+                continue;
+              }
+              if (!response.ok) {
+                console.error(`Error fetching ${url}: HTTP ${response.status}`);
+                return null;
+              }
+              const data = await response.json();
+              return data;
+            } catch (err) {
+              console.error(`Error fetching ${url}: ${err.message}`);
+              await new Promise(r => setTimeout(r, 1000 * (attempt + 1)));
+              attempt++;
+            }
           }
+          return null;
         });
 
         const results = await Promise.all(batchPromises);

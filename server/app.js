@@ -27,7 +27,7 @@ app.use(cors());
 // Global Rate Limiting
 const apiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 2000, // Limit each IP to 2000 requests per window
+  max: 15000, // Limit each IP to 15000 requests per window (accommodates high-frequency polling)
   standardHeaders: true,
   legacyHeaders: false,
 });
