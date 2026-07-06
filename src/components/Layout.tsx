@@ -48,19 +48,53 @@ export function Layout({ children, currentPage, onNavigate }: LayoutProps) {
       const handleCopy = (e: ClipboardEvent) => e.preventDefault();
       const handleContextMenu = (e: MouseEvent) => e.preventDefault();
       const handleKeyDown = (e: KeyboardEvent) => {
+        // Block Ctrl+C / Cmd+C
         if ((e.ctrlKey || e.metaKey) && (e.key === 'c' || e.key === 'C')) {
           e.preventDefault();
         }
+        // Block PrintScreen key
+        if (e.key === 'PrintScreen') {
+          e.preventDefault();
+          // Optionally clear clipboard
+          navigator.clipboard.writeText('');
+        }
+        // Block Snipping Tool shortcuts (Win+Shift+S, Cmd+Shift+3/4/5)
+        if ((e.metaKey || e.ctrlKey) && e.shiftKey && ['s', 'S', '3', '4', '5'].includes(e.key)) {
+          e.preventDefault();
+        }
+      };
+
+      const handleWindowBlur = () => {
+        document.body.style.filter = 'blur(10px)';
+        document.body.style.opacity = '0';
+      };
+
+      const handleWindowFocus = () => {
+        document.body.style.filter = 'none';
+        document.body.style.opacity = '1';
       };
 
       document.addEventListener('copy', handleCopy);
       document.addEventListener('contextmenu', handleContextMenu);
       document.addEventListener('keydown', handleKeyDown);
+      window.addEventListener('blur', handleWindowBlur);
+      window.addEventListener('focus', handleWindowFocus);
+
+      // Print protection
+      const style = document.createElement('style');
+      style.innerHTML = `@media print { body { display: none !important; } }`;
+      document.head.appendChild(style);
 
       return () => {
         document.removeEventListener('copy', handleCopy);
         document.removeEventListener('contextmenu', handleContextMenu);
         document.removeEventListener('keydown', handleKeyDown);
+        window.removeEventListener('blur', handleWindowBlur);
+        window.removeEventListener('focus', handleWindowFocus);
+        document.head.removeChild(style);
+        // Clean up styles
+        document.body.style.filter = 'none';
+        document.body.style.opacity = '1';
       };
     }
   }, [isExportRestricted]);
