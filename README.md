@@ -28,7 +28,7 @@ Check out the live deployment of ThiruXDB here:
 - **High-Performance Dashboard** — Live stats cached directly on endpoint documents for instantaneous rendering of total records, active endpoints, and distributions.
 - **Export** — Download current view as JSON or CSV
 - **Mobile Responsive** — Fully optimized UI with sidebar overlays and responsive grids for managing data on the go.
-- **Role-Based Access Control (RBAC)** — Three-tier permission system (`admin`, `editor`, `viewer`) utilizing JWTs and bcrypt password hashing.
+- **Role-Based Access Control (RBAC)** — Three-tier permission system (`admin`, `editor`, `viewer`) utilizing JWTs and bcrypt password hashing. Includes granular, per-user page restrictions (e.g. blocking access to endpoints, fetch data, or file exporting).
 - **Activity & IP Auditing** — Comprehensive user activity logs with automatic IP Geolocation (`ip-api.com`), tracking ISPs, Cities, and Device information.
 - **Frappe UI "Espresso" Aesthetic** — Sleek, flat design layout natively built in React + Tailwind.
 - **Global Light/Dark Mode** — Fully responsive theme switching that persists in local storage.

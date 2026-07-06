@@ -354,6 +354,7 @@ export function UsersPage() {
                     { id: 'endpoints', label: 'API Endpoints' },
                     { id: 'fetch', label: 'Fetch Data' },
                     { id: 'data', label: 'Data Browser' },
+                    { id: 'export', label: 'File Export & Copy' },
                   ].map((page) => (
                     <div key={page.id} className="flex items-center gap-2">
                       <input
@@ -429,9 +430,16 @@ export function UsersPage() {
                   </div>
                   <div className="relative mt-4">
                     <div className="absolute top-2 right-2">
-                      <button onClick={copyIpData} className="p-1.5 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 rounded text-gray-700 dark:text-gray-300 transition" title="Copy JSON">
-                        {ipModal.copied ? <CheckCircle2 className="w-4 h-4 text-green-500" /> : <Copy className="w-4 h-4" />}
-                      </button>
+                      <div className="flex gap-2">
+                        {!(user?.restricted_pages || []).includes('export') && (
+                          <button onClick={copyIpData} className="p-1.5 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 rounded text-gray-700 dark:text-gray-300 transition" title="Copy JSON">
+                            {ipModal.copied ? <CheckCircle2 className="w-4 h-4 text-green-500" /> : <Copy className="w-4 h-4" />}
+                          </button>
+                        )}
+                        <button onClick={() => setIpModal(prev => ({ ...prev, isOpen: false }))} className="p-1.5 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 rounded text-gray-700 dark:text-gray-300 transition" title="Close">
+                          <X className="w-4 h-4" />
+                        </button>
+                      </div>
                     </div>
                     <pre
                       className="bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg p-4 text-xs font-mono text-gray-700 dark:text-gray-300 overflow-auto max-h-[40vh] sm:max-h-[50vh]"
@@ -449,6 +457,7 @@ export function UsersPage() {
 }
 
 function UserLogsModal({ user, onClose, onIpLookup }: { user: User; onClose: () => void; onIpLookup: (ip: string) => void }) {
+  const { user: currentUser } = useAuth();
   const [logs, setLogs] = useState<ActivityLog[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [page, setPage] = useState(1);
@@ -509,20 +518,24 @@ function UserLogsModal({ user, onClose, onIpLookup }: { user: User; onClose: () 
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
       <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl w-full max-w-5xl max-h-[90vh] overflow-hidden shadow-2xl flex flex-col">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700 gap-4">
-          <div>
-            <h3 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2"><Activity className="w-5 h-5 text-gray-700 dark:text-gray-300" /> Activity Logs: {user.username}</h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Detailed history of this user's actions</p>
-          </div>
-          <div className="flex items-center gap-3 w-full sm:w-auto">
-            <button
-              onClick={handleExport}
-              disabled={isExporting}
-              className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition disabled:opacity-50"
-            >
-              {isExporting ? <span className="animate-spin">⌛</span> : <Download className="w-4 h-4" />}
-              Export CSV
-            </button>
-            <button onClick={onClose} className="p-2 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:bg-gray-700 rounded-lg transition"><X className="w-5 h-5" /></button>
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 w-full">
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Activity Logs for {user.username}</h3>
+              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Showing up to 10,000 most recent actions</p>
+            </div>
+            <div className="flex items-center gap-3">
+              {!(currentUser?.restricted_pages || []).includes('export') && (
+                <button
+                  onClick={handleExport}
+                  disabled={isExporting}
+                  className="flex items-center gap-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-4 py-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition disabled:opacity-50"
+                >
+                  {isExporting ? <span className="animate-spin">⌛</span> : <Download className="w-4 h-4" />}
+                  Export CSV
+                </button>
+              )}
+              <button onClick={onClose} className="p-2 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:bg-gray-700 rounded-lg transition"><X className="w-5 h-5" /></button>
+            </div>
           </div>
         </div>
 
