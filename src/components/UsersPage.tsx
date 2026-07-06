@@ -359,6 +359,7 @@ export function UsersPage() {
                       { id: 'endpoints', label: 'API Endpoints' },
                       { id: 'fetch', label: 'Fetch Data' },
                       { id: 'data', label: 'Data Browser' },
+                      { id: 'logs', label: 'Fetch Logs' },
                       { id: 'export', label: 'File Export & Copy' },
                     ].map((page) => (
                       <div key={page.id} className="flex items-center gap-2">
