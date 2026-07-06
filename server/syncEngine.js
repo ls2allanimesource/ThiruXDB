@@ -76,11 +76,23 @@ export async function runSyncJob(endpointIdStr, skipOffset) {
     if (endpoint.path_variables && endpoint.path_variables.length > 0) {
       for (const pv of endpoint.path_variables) {
         if (!pv.variable || !pv.source_collection || !pv.source_field) continue;
-        const s = pv.source_field;
+        let actualCollection = pv.source_collection;
+        let queryFilter = {};
+
+        const srcEndpoint = await db.collection('thiruxdb_api_endpoints').findOne({ name: pv.source_collection });
+        if (srcEndpoint) {
+          if (srcEndpoint.collection_name) {
+            actualCollection = srcEndpoint.collection_name;
+          } else {
+            actualCollection = 'thiruxdb_data_records';
+            queryFilter = { endpoint_id: srcEndpoint._id.toString() };
+          }
+        }
+
         const [v1, v2, v3] = await Promise.all([
-          db.collection(pv.source_collection).distinct(s),
-          db.collection(pv.source_collection).distinct(`mapped_data.${s}`),
-          db.collection(pv.source_collection).distinct(`raw_data.${s}`)
+          db.collection(actualCollection).distinct(s, queryFilter),
+          db.collection(actualCollection).distinct(`mapped_data.${s}`, queryFilter),
+          db.collection(actualCollection).distinct(`raw_data.${s}`, queryFilter)
         ]);
         const values = Array.from(new Set([...v1, ...v2, ...v3]));
         const newUrls = [];
