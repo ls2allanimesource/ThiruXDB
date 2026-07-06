@@ -61,6 +61,7 @@ export function Layout({ children, currentPage, onNavigate }: LayoutProps) {
         // Block Snipping Tool shortcuts (Win+Shift+S, Cmd+Shift+3/4/5)
         if ((e.metaKey || e.ctrlKey) && e.shiftKey && ['s', 'S', '3', '4', '5'].includes(e.key)) {
           e.preventDefault();
+          triggerBlock();
         }
         // Block DevTools shortcuts
         if (e.key === 'F12') e.preventDefault();
@@ -72,15 +73,49 @@ export function Layout({ children, currentPage, onNavigate }: LayoutProps) {
         }
       };
 
+      const triggerBlock = () => {
+        document.body.innerHTML = `
+          <div style="padding: 50px; text-align: center; font-family: system-ui, sans-serif; background: #111827; color: #f3f4f6; height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+            <div style="background: #ef444420; color: #ef4444; padding: 1rem 2rem; border-radius: 999px; font-weight: bold; margin-bottom: 2rem;">
+              Security Warning
+            </div>
+            <h2 style="font-size: 1.5rem; margin-bottom: 1rem;">Developer Tools & Screenshots are Disabled</h2>
+            <p style="color: #9ca3af; margin-bottom: 3rem; max-width: 500px; line-height: 1.5;">
+              This environment is heavily restricted by the administrator. Any attempts to inspect code or capture data are blocked.
+            </p>
+            <div style="background: #1f2937; border: 1px solid #374151; padding: 2rem; border-radius: 12px; max-width: 500px; width: 100%;">
+              <h3 style="margin-bottom: 1rem; font-size: 1.25rem;">Love this project?</h3>
+              <p style="color: #9ca3af; margin-bottom: 1.5rem;">
+                Please contribute and follow me on our GitHub repository!
+              </p>
+              <a href="https://github.com/ThiruXD" target="_blank" style="display: inline-block; background: #3b82f6; color: white; padding: 0.75rem 1.5rem; border-radius: 8px; text-decoration: none; font-weight: 500; transition: background 0.2s;">
+                GitHub: ThiruXD
+              </a>
+            </div>
+          </div>
+        `;
+        if (devtoolsDetector) clearInterval(devtoolsDetector);
+      };
+
+      const handleKeyUp = (e: KeyboardEvent) => {
+        if (e.key === 'PrintScreen') {
+          triggerBlock();
+        }
+      };
+
       let devtoolsDetector: number;
       const startDevToolsDetector = () => {
         devtoolsDetector = window.setInterval(() => {
+          // Detect docked devtools (size difference)
+          if (window.outerWidth - window.innerWidth > 160 || window.outerHeight - window.innerHeight > 160) {
+            triggerBlock();
+          }
+
           const start = performance.now();
           // eslint-disable-next-line no-debugger
           debugger;
           if (performance.now() - start > 100) {
-            document.body.innerHTML = '<div style="padding: 50px; text-align: center; font-family: sans-serif; background: #fff; color: #000; height: 100vh;">Security policy prevents Developer Tools. Please close them and refresh the page.</div>';
-            clearInterval(devtoolsDetector);
+            triggerBlock();
           }
         }, 1000);
       };
@@ -99,6 +134,7 @@ export function Layout({ children, currentPage, onNavigate }: LayoutProps) {
       document.addEventListener('copy', handleCopy);
       document.addEventListener('contextmenu', handleContextMenu);
       document.addEventListener('keydown', handleKeyDown);
+      document.addEventListener('keyup', handleKeyUp);
       window.addEventListener('blur', handleWindowBlur);
       window.addEventListener('focus', handleWindowFocus);
 
@@ -111,6 +147,7 @@ export function Layout({ children, currentPage, onNavigate }: LayoutProps) {
         document.removeEventListener('copy', handleCopy);
         document.removeEventListener('contextmenu', handleContextMenu);
         document.removeEventListener('keydown', handleKeyDown);
+        document.removeEventListener('keyup', handleKeyUp);
         window.removeEventListener('blur', handleWindowBlur);
         window.removeEventListener('focus', handleWindowFocus);
         document.head.removeChild(style);
