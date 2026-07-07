@@ -88,15 +88,28 @@ ThiruXDB/
 
 ## Sync Engine Architecture & Deployment
 
-ThiruXDB uses a highly optimized, state-persistent A self-hosted API data aggregation dashboard — configure external REST endpoints, fetch & store their data into MongoDB, browse and search records, all from a clean web UI. designed to handle large payloads (20MB+) while gracefully tolerating Serverless environments.
+ThiruXDB uses a highly optimized, state-persistent Sync Engine designed to handle massive data payloads. Because this engine relies on long-running background tasks and persistent database connections, **your choice of hosting platform is critical.**
 
-- **MongoDB State Tracking:** Sync progress is stored centrally in the `sync_jobs` collection. This allows multi-container Serverless environments (like Netlify or Vercel) to auto-scale without losing track of your download's progress or speed.
-- **Detached Promise Execution:** By default, the engine spins up the sync as a detached background promise. This operates flawlessly out-of-the-box on any standard **VPS** or persistent Node.js environment.
-- **Serverless Environments (Vercel):** When deployed to standard serverless functions (which strictly freeze upon HTTP response), the sync engine utilizes a "freeze and thaw" mechanism. The engine will pause execution when the function sleeps, and will instantly resume exactly where it left off when the frontend's 1-second UI polling tickles the container awake. (Note: this is perfectly safe, but will result in slower download speeds compared to a VPS).
+### ❌ Serverless Platforms (Not Recommended)
+Serverless platforms instantly "freeze" or kill execution environments as soon as an HTTP request finishes or times out (usually 10 seconds). Because ThiruXDB runs background data pipelines that can take several minutes to process thousands of records, **Serverless platforms will freeze the background job and sever database connections if you close your browser.**
 
-> [!WARNING]
-> **Cloudflare Pages / Workers are NOT supported.** The Express backend uses the native `mongodb` Node.js driver, which requires raw TCP socket access (`net` and `tls` modules). Cloudflare's V8 Isolates do not support these modules, meaning the backend will instantly crash if deployed to Cloudflare. Please use **Netlify**, **Vercel**, or a **VPS**.
-- **Netlify Background Functions:** If `process.env.NETLIFY` is detected, the API will automatically route the sync task to a dedicated Netlify Background Function (`netlify/functions/sync-background.js`). This entirely bypasses the 10-second timeout freeze, running at full line-speed for up to 15 minutes!
+- **Netlify & Vercel:** You can deploy here, but **you must keep your browser tab open** while syncing so the UI's 1-second polling keeps the serverless function awake. If you close the tab, the sync will instantly freeze and fail.
+- **Cloudflare Pages / Workers (Not Supported):** The Express backend uses the native `mongodb` Node.js driver, which requires raw TCP socket access (`net` and `tls` modules). Cloudflare's V8 Isolates do not support these modules, meaning the backend will instantly crash.
+
+### ✅ Persistent Servers (Highly Recommended)
+To run infinite background syncs, you must deploy to a **Persistent Server** that runs 24/7. This allows you to click "Fetch", close your laptop, and let the server securely process 10,000+ records in the background!
+
+**Top Free Platforms:**
+1. **[Render.com](https://render.com/) (Web Service)**
+   - **Build Command:** `bun install && bun run build` (or `npm install && npm run build`)
+   - **Start Command:** `bun run start` (or `npm run start`)
+2. **[Railway.app](https://railway.app/)**
+   - Automatically detects `package.json` and runs the `start` script flawlessly.
+3. **VPS / Docker (DigitalOcean, Hetzner, AWS EC2)**
+   - Run via `pm2 start server/index.js` or deploy via Docker.
+
+> [!TIP]
+> Ensure you configure all Environment Variables (`MONGODB_URI`, `MONGODB_DB`, etc.) in your hosting provider's dashboard before deploying!
 
 ---
 
