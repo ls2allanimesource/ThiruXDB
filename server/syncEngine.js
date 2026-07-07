@@ -254,11 +254,15 @@ export async function runSyncJob(endpointIdStr, skipOffset) {
             recordsCreated += (result.upsertedCount || 0) + (result.insertedCount || 0);
             pushLog(`Database Result: ${result.upsertedCount || 0} created, ${result.modifiedCount || 0} updated. (Matches without changes are skipped)`, 'success');
           } catch (bulkErr) {
-            pushLog(`[ERROR] Database bulk write partially failed: ${bulkErr.message}`, 'error');
+            pushLog(`[ERROR] Database bulk write failed: ${bulkErr.message}`, 'error');
             console.error('Bulk write error:', bulkErr.message);
             if (bulkErr.result) {
               recordsUpdated += bulkErr.result.nModified || 0;
               recordsCreated += (bulkErr.result.nUpserted || 0) + (bulkErr.result.nInserted || 0);
+            }
+            // If the database connection died, abort the entire sync job to prevent hammering the external API
+            if (bulkErr.name === 'MongoNetworkError' || bulkErr.name === 'MongoNotConnectedError' || bulkErr.name === 'MongoTopologyClosedError' || bulkErr.message.includes('network socket disconnected')) {
+               throw new Error(`Fatal Database Connection Error: ${bulkErr.message}`);
             }
           }
         }
@@ -358,6 +362,9 @@ export async function runSyncJob(endpointIdStr, skipOffset) {
                   recordsUpdated += bulkErr.result.nModified || 0;
                   recordsCreated += (bulkErr.result.nUpserted || 0) + (bulkErr.result.nInserted || 0);
                 }
+                if (bulkErr.name === 'MongoNetworkError' || bulkErr.name === 'MongoNotConnectedError' || bulkErr.name === 'MongoTopologyClosedError' || bulkErr.message.includes('network socket disconnected')) {
+                   throw new Error(`Fatal Database Connection Error: ${bulkErr.message}`);
+                }
               }
               bulkOps.length = 0;
               jobState.current = i;
@@ -374,6 +381,9 @@ export async function runSyncJob(endpointIdStr, skipOffset) {
               if (bulkErr.result) {
                 recordsUpdated += bulkErr.result.nModified || 0;
                 recordsCreated += (bulkErr.result.nUpserted || 0) + (bulkErr.result.nInserted || 0);
+              }
+              if (bulkErr.name === 'MongoNetworkError' || bulkErr.name === 'MongoNotConnectedError' || bulkErr.name === 'MongoTopologyClosedError' || bulkErr.message.includes('network socket disconnected')) {
+                 throw new Error(`Fatal Database Connection Error: ${bulkErr.message}`);
               }
             }
           }
